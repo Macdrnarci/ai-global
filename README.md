@@ -1,4 +1,4 @@
-# AI Config
+# AI Global
 
 [中文文档](README_CN.md)
 
@@ -84,7 +84,7 @@ This will:
 ### Edit instructions
 
 ```
-~/.ai-global/instructions.md
+~/.ai-global/global.md
 ```
 
 Changes take effect immediately - all tools read the same file via symlinks.
@@ -131,7 +131,7 @@ ai-global skill user/repo/skills/react.md
 
 ```
 ~/.ai-global/
-├── instructions.md  <- Shared instructions (edit this)
+├── global.md        <- Shared instructions (edit this)
 ├── skills/          <- Shared skills (merged from all tools)
 ├── agents/          <- Shared agents
 ├── rules/           <- Shared rules
@@ -142,12 +142,12 @@ ai-global skill user/repo/skills/react.md
 Each AI tool's config directory contains symlinks:
 
 ~/.claude/
-├── CLAUDE.md -> ~/.ai-global/instructions.md  (symlink)
+├── CLAUDE.md -> ~/.ai-global/global.md        (symlink)
 ├── skills/   -> ~/.ai-global/skills/          (symlink)
 └── commands/ -> ~/.ai-global/commands/        (symlink)
 
 ~/.cursor/
-├── rules/global.md -> ~/.ai-global/instructions.md (symlink)
+├── rules/global.md -> ~/.ai-global/global.md       (symlink)
 ├── skills/         -> ~/.ai-global/skills/         (symlink)
 └── prompts/        -> ~/.ai-global/prompts/        (symlink)
 
@@ -183,7 +183,7 @@ ai-global uninstall
 npm uninstall -g ai-global
 ```
 
-## Example instructions.md
+## Example global.md
 
 ```markdown
 # AI Assistant Instructions

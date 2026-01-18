@@ -1,4 +1,4 @@
-# AI Config
+# AI Global
 
 [English](README.md)
 
@@ -84,7 +84,7 @@ ai-global
 ### 编辑指令
 
 ```
-~/.ai-global/instructions.md
+~/.ai-global/global.md
 ```
 
 修改立即生效 - 所有工具通过软链读取同一文件。
@@ -131,7 +131,7 @@ ai-global skill user/repo/skills/react.md
 
 ```
 ~/.ai-global/
-├── instructions.md  <- 共享指令（编辑这个）
+├── global.md        <- 共享指令（编辑这个）
 ├── skills/          <- 共享技能（从所有工具合并）
 ├── agents/          <- 共享代理
 ├── rules/           <- 共享规则
@@ -142,12 +142,12 @@ ai-global skill user/repo/skills/react.md
 各 AI 工具的配置目录中存放软链：
 
 ~/.claude/
-├── CLAUDE.md -> ~/.ai-global/instructions.md  (软链)
+├── CLAUDE.md -> ~/.ai-global/global.md        (软链)
 ├── skills/   -> ~/.ai-global/skills/          (软链)
 └── commands/ -> ~/.ai-global/commands/        (软链)
 
 ~/.cursor/
-├── rules/global.md -> ~/.ai-global/instructions.md (软链)
+├── rules/global.md -> ~/.ai-global/global.md       (软链)
 ├── skills/         -> ~/.ai-global/skills/         (软链)
 └── prompts/        -> ~/.ai-global/prompts/        (软链)
 
@@ -183,7 +183,7 @@ ai-global uninstall
 npm uninstall -g ai-global
 ```
 
-## instructions.md 示例
+## global.md 示例
 
 ```markdown
 # AI 代码助手指令
