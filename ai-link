@@ -752,7 +752,7 @@ uninstall() {
 }
 
 # Version
-VERSION="1.0.0"
+VERSION="1.0.1"
 
 # Show version
 show_version() {
@@ -793,16 +793,67 @@ upgrade_ailink() {
 }
 
 # Add custom tool
-add_tool() {
+# Add skill/agent/rule/command/prompt
+add_item() {
+    local type="$1"
+    local file="$2"
+    
+    if [[ -z "$type" ]] || [[ -z "$file" ]]; then
+        log_error "Usage: ai-link add <type> <file>"
+        echo ""
+        echo "Types: skill, agent, rule, command, prompt"
+        echo ""
+        echo "Examples:"
+        echo "  ai-link add skill my-skill.md"
+        echo "  ai-link add agent my-agent.md"
+        echo "  ai-link add rule my-rule.md"
+        return 1
+    fi
+    
+    local target_dir=""
+    case "$type" in
+        skill|skills)   target_dir="$SKILLS_DIR" ;;
+        agent|agents)   target_dir="$AGENTS_DIR" ;;
+        rule|rules)     target_dir="$RULES_DIR" ;;
+        command|commands) target_dir="$COMMANDS_DIR" ;;
+        prompt|prompts) target_dir="$PROMPTS_DIR" ;;
+        *)
+            log_error "Unknown type: $type"
+            echo "Valid types: skill, agent, rule, command, prompt"
+            return 1
+            ;;
+    esac
+    
+    mkdir -p "$target_dir"
+    
+    if [[ -f "$file" ]]; then
+        # Copy existing file
+        local basename=$(basename "$file")
+        cp "$file" "$target_dir/$basename"
+        log_ok "Added $type: $target_dir/$basename"
+    else
+        # Create new file
+        local target_file="$target_dir/$file"
+        if [[ ! "$file" == *.md ]]; then
+            target_file="$target_dir/${file}.md"
+        fi
+        touch "$target_file"
+        log_ok "Created $type: $target_file"
+        echo "Edit: $target_file"
+    fi
+}
+
+# Add custom tool
+custom_tool() {
     local dir_name="$1"
     local instr_file="${2:-instructions.md}"
     
     if [[ -z "$dir_name" ]]; then
-        log_error "Usage: ai-link add <directory> [instructions_file]"
+        log_error "Usage: ai-link custom <directory> [instructions_file]"
         echo ""
         echo "Examples:"
-        echo "  ai-link add .mytool"
-        echo "  ai-link add .mytool INSTRUCTIONS.md"
+        echo "  ai-link custom .mytool"
+        echo "  ai-link custom .mytool INSTRUCTIONS.md"
         return 1
     fi
     
@@ -847,17 +898,18 @@ AI-Link: Unified AI Tools Configuration Manager v$VERSION
 Usage: ai-link [command]
 
 Commands:
-  update             Scan, merge and update symlinks (default)
-  status             Show symlink status
-  list               List all supported AI tools
-  backups            List available backups
-  restore <tool>     Restore a tool's original config
-  restore all        Restore all tools
-  add <dir> [file]   Add a custom tool
-  upgrade            Upgrade ai-link to latest version
-  uninstall          Completely remove ai-link
-  version            Show version
-  help               Show this help
+  update               Scan, merge and update symlinks (default)
+  status               Show symlink status
+  list                 List all supported AI tools
+  backups              List available backups
+  restore <tool>       Restore a tool's original config
+  restore all          Restore all tools
+  add <type> <file>    Add a skill/agent/rule/command/prompt
+  custom <dir> [file]  Add a custom tool
+  upgrade              Upgrade ai-link to latest version
+  uninstall            Completely remove ai-link
+  version              Show version
+  help                 Show this help
 
 Shared directories:
   ~/.ai-config/instructions.md   Instructions for all tools
@@ -868,11 +920,11 @@ Shared directories:
   ~/.ai-config/prompts/          Prompt templates
 
 Examples:
-  ai-link                  # Scan, merge and update symlinks
-  ai-link status           # Check symlink status
-  ai-link add .mytool      # Add custom tool
-  ai-link restore claude   # Restore Claude's config
-  ai-link restore all      # Restore all tools
+  ai-link                        # Scan, merge and update symlinks
+  ai-link add skill react.md     # Add a skill
+  ai-link add agent coder.md     # Add an agent
+  ai-link custom .mytool         # Add custom tool
+  ai-link restore claude         # Restore Claude's config
 
 EOF
 }
@@ -888,19 +940,18 @@ main() {
     fi
     
     if [[ ! -f "$KNOWN_TOOLS_FILE" ]]; then
-        if [[ "$cmd" == "help" ]] || [[ "$cmd" == "--help" ]] || [[ "$cmd" == "-h" ]]; then
-            show_help
-            exit 0
-        fi
-        if [[ "$cmd" == "list" ]]; then
-            list_supported
-            exit 0
-        fi
-        if [[ "$cmd" == "version" ]] || [[ "$cmd" == "-v" ]] || [[ "$cmd" == "--version" ]]; then
-            show_version
-            exit 0
-        fi
-        cmd="update"
+        case "$cmd" in
+            help|--help|-h) show_help; exit 0 ;;
+            list) list_supported; exit 0 ;;
+            version|-v|--version) show_version; exit 0 ;;
+            add|custom|restore|status|backups)
+                # These commands need tools to be scanned first
+                log_info "No tools configured yet. Running initial scan..."
+                update_tools
+                [[ "$cmd" == "add" || "$cmd" == "custom" ]] || exit 0
+                ;;
+            *) cmd="update" ;;
+        esac
     fi
     
     case "$cmd" in
@@ -909,8 +960,9 @@ main() {
         list)         list_supported ;;
         backups)      list_backups ;;
         restore)      restore_tool "$2" ;;
-        add)          add_tool "$2" "$3" ;;
-        upgrade) upgrade_ailink ;;
+        add)          add_item "$2" "$3" ;;
+        custom)       custom_tool "$2" "$3" ;;
+        upgrade)      upgrade_ailink ;;
         uninstall)    uninstall ;;
         version|-v|--version) show_version ;;
         help|--help|-h) show_help ;;

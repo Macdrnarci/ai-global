@@ -4,7 +4,7 @@
 
 AI 编程助手统一配置管理器。编辑一个文件，同步到所有 AI 工具。
 
-## 支持的工具 (38+)
+## 支持的工具
 
 | 工具 | Instructions | Skills | Agents | Rules | Commands | Prompts |
 |------|:------:|:------:|:------:|:-----:|:--------:|:-------:|
@@ -24,7 +24,27 @@ AI 编程助手统一配置管理器。编辑一个文件，同步到所有 AI �
 | CodeGPT | ✓ | | | | | ✓ |
 | GPT Engineer | ✓ | | | | | ✓ |
 | Smol Developer | ✓ | | | | | ✓ |
-| + 20 更多... | ✓ | | | | | |
+| Amp | ✓ | | | | | |
+| Trae | ✓ | | | | | |
+| OpenCode | ✓ | | | | | |
+| OpenAI Codex | ✓ | | | | | |
+| Aider | ✓ | | | | | |
+| Codeium | ✓ | | | | | |
+| TabNine | ✓ | | | | | |
+| Zed | ✓ | | | | | |
+| Aide | ✓ | | | | | |
+| PearAI | ✓ | | | | | |
+| Supermaven | ✓ | | | | | |
+| CodeStory | ✓ | | | | | |
+| Double | ✓ | | | | | |
+| Blackbox AI | ✓ | | | | | |
+| Amazon Q | ✓ | | | | | |
+| Copilot Workspace | ✓ | | | | | |
+| Goose AI | ✓ | | | | | |
+| Mentat | ✓ | | | | | |
+| Melty | ✓ | | | | | |
+| Void | ✓ | | | | | |
+| Qoder | ✓ | | | | | |
 
 ## 安装
 
@@ -62,16 +82,16 @@ ai-link
 
 ### 编辑指令
 
-```bash
-vim ~/.ai-config/instructions.md
+```
+~/.ai-config/instructions.md
 ```
 
 修改立即生效 - 所有工具通过软链读取同一文件。
 
 ### 添加技能
 
-```bash
-vim ~/.ai-config/skills/my-skill.md
+```
+~/.ai-config/skills/my-skill.md
 ```
 
 该技能会自动同步到所有支持 skills 的工具。
@@ -86,20 +106,28 @@ vim ~/.ai-config/skills/my-skill.md
 | `ai-link backups` | 列出可用的备份 |
 | `ai-link restore <tool>` | 恢复某个工具的原始配置 |
 | `ai-link restore all` | 恢复所有工具 |
-| `ai-link add <dir> [file]` | 添加自定义工具 |
+| `ai-link add <type> <file>` | 添加 skill/agent/rule/command/prompt |
+| `ai-link custom <dir> [file]` | 添加自定义工具 |
 | `ai-link upgrade` | 升级 ai-link 到最新版本 |
 | `ai-link uninstall` | 彻底卸载 ai-link |
 | `ai-link version` | 显示版本号 |
 | `ai-link help` | 显示帮助 |
 
+### 添加 skill/agent/rule/command/prompt
+
+```bash
+ai-link add skill my-skill.md      # 添加技能
+ai-link add agent my-agent.md      # 添加代理
+ai-link add rule my-rule.md        # 添加规则
+ai-link add command my-cmd.md      # 添加命令
+ai-link add prompt my-prompt.md    # 添加提示词
+```
+
 ### 添加自定义工具
 
 ```bash
-# 使用默认的 instructions.md
-ai-link add .mytool
-
-# 使用自定义指令文件
-ai-link add .mytool INSTRUCTIONS.md
+ai-link custom .mytool                   # 使用默认 instructions.md
+ai-link custom .mytool INSTRUCTIONS.md   # 使用自定义文件
 ```
 
 ## 工作原理
@@ -126,7 +154,7 @@ ai-link add .mytool INSTRUCTIONS.md
 ├── skills/         -> ~/.ai-config/skills/         (软链)
 └── prompts/        -> ~/.ai-config/prompts/        (软链)
 
-... 以及 30+ 个工具
+... 以及更多工具
 ```
 
 ## 合并行为

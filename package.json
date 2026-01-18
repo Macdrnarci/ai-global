@@ -1,6 +1,6 @@
 {
   "name": "ai-link",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Unified configuration manager for AI coding assistants",
   "bin": {
     "ai-link": "./ai-link"

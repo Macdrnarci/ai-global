@@ -4,7 +4,7 @@
 
 Unified configuration manager for AI coding assistants. Edit one file, sync to all your AI tools.
 
-## Supported Tools (38+)
+## Supported Tools
 
 | Tool | Instructions | Skills | Agents | Rules | Commands | Prompts |
 |------|:------:|:------:|:------:|:-----:|:--------:|:-------:|
@@ -24,7 +24,27 @@ Unified configuration manager for AI coding assistants. Edit one file, sync to a
 | CodeGPT | ✓ | | | | | ✓ |
 | GPT Engineer | ✓ | | | | | ✓ |
 | Smol Developer | ✓ | | | | | ✓ |
-| + 20 more... | ✓ | | | | | |
+| Amp | ✓ | | | | | |
+| Trae | ✓ | | | | | |
+| OpenCode | ✓ | | | | | |
+| OpenAI Codex | ✓ | | | | | |
+| Aider | ✓ | | | | | |
+| Codeium | ✓ | | | | | |
+| TabNine | ✓ | | | | | |
+| Zed | ✓ | | | | | |
+| Aide | ✓ | | | | | |
+| PearAI | ✓ | | | | | |
+| Supermaven | ✓ | | | | | |
+| CodeStory | ✓ | | | | | |
+| Double | ✓ | | | | | |
+| Blackbox AI | ✓ | | | | | |
+| Amazon Q | ✓ | | | | | |
+| Copilot Workspace | ✓ | | | | | |
+| Goose AI | ✓ | | | | | |
+| Mentat | ✓ | | | | | |
+| Melty | ✓ | | | | | |
+| Void | ✓ | | | | | |
+| Qoder | ✓ | | | | | |
 
 ## Installation
 
@@ -62,16 +82,16 @@ This will:
 
 ### Edit instructions
 
-```bash
-vim ~/.ai-config/instructions.md
+```
+~/.ai-config/instructions.md
 ```
 
 Changes take effect immediately - all tools read the same file via symlinks.
 
 ### Add a skill
 
-```bash
-vim ~/.ai-config/skills/my-skill.md
+```
+~/.ai-config/skills/my-skill.md
 ```
 
 The skill will be available in all tools that support skills.
@@ -86,20 +106,28 @@ The skill will be available in all tools that support skills.
 | `ai-link backups` | List available backups |
 | `ai-link restore <tool>` | Restore a tool's original config |
 | `ai-link restore all` | Restore all tools |
-| `ai-link add <dir> [file]` | Add a custom tool |
+| `ai-link add <type> <file>` | Add a skill/agent/rule/command/prompt |
+| `ai-link custom <dir> [file]` | Add a custom tool |
 | `ai-link upgrade` | Upgrade ai-link to latest version |
 | `ai-link uninstall` | Completely remove ai-link |
 | `ai-link version` | Show version |
 | `ai-link help` | Show help |
 
+### Add skill/agent/rule/command/prompt
+
+```bash
+ai-link add skill my-skill.md      # Add a skill
+ai-link add agent my-agent.md      # Add an agent
+ai-link add rule my-rule.md        # Add a rule
+ai-link add command my-cmd.md      # Add a command
+ai-link add prompt my-prompt.md    # Add a prompt
+```
+
 ### Add custom tool
 
 ```bash
-# Add a tool with default instructions.md
-ai-link add .mytool
-
-# Add a tool with custom instructions file
-ai-link add .mytool INSTRUCTIONS.md
+ai-link custom .mytool                   # With default instructions.md
+ai-link custom .mytool INSTRUCTIONS.md   # With custom file
 ```
 
 ## How it works
@@ -126,7 +154,7 @@ Each AI tool's config directory contains symlinks:
 ├── skills/         -> ~/.ai-config/skills/         (symlink)
 └── prompts/        -> ~/.ai-config/prompts/        (symlink)
 
-... and 30+ more tools
+... and more tools
 ```
 
 ## Merge behavior
