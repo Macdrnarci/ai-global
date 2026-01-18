@@ -1,9 +1,9 @@
 {
-  "name": "ai-config",
+  "name": "ai-global",
   "version": "1.0.0",
   "description": "Unified configuration manager for AI coding assistants",
   "bin": {
-    "ai-config": "./ai-config"
+    "ai-global": "ai-global"
   },
   "scripts": {
     "postinstall": "node scripts/postinstall.js"
@@ -22,9 +22,9 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nanxiaobei/ai-config.git"
+    "url": "git+https://github.com/nanxiaobei/ai-global.git"
   },
-  "homepage": "https://github.com/nanxiaobei/ai-config#readme",
+  "homepage": "https://github.com/nanxiaobei/ai-global#readme",
   "engines": {
     "node": ">=14"
   },
@@ -33,7 +33,7 @@
     "linux"
   ],
   "files": [
-    "ai-config",
+    "ai-global",
     "scripts/"
   ]
 }

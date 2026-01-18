@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# AI-Config: Unified AI Tools Configuration Manager
-# https://github.com/nanxiaobei/ai-config
+# AI-Global: Unified AI Tools Configuration Manager
+# https://github.com/nanxiaobei/ai-global
 
 set -e
 
-CONFIG_DIR="$HOME/.ai-config"
+CONFIG_DIR="$HOME/.ai-global"
 KNOWN_TOOLS_FILE="$CONFIG_DIR/.known-tools"
 BACKUP_DIR="$CONFIG_DIR/backups"
 INSTRUCTIONS_MD="$CONFIG_DIR/instructions.md"
@@ -180,7 +180,7 @@ show_status() {
     echo ""
 
     if [[ ! -f "$KNOWN_TOOLS_FILE" ]]; then
-        log_info "No tools configured. Run 'ai-config' first."
+        log_info "No tools configured. Run 'ai-global' first."
         return
     fi
 
@@ -520,7 +520,7 @@ restore_all_tools() {
     rm -f "$KNOWN_TOOLS_FILE"
 
     echo ""
-    log_info "Restored $restored_count tool(s). Run 'ai-config' to re-link."
+    log_info "Restored $restored_count tool(s). Run 'ai-global' to re-link."
 }
 
 # Restore a specific tool
@@ -528,7 +528,7 @@ restore_tool() {
     local tool_query="$1"
 
     if [[ -z "$tool_query" ]]; then
-        log_error "Usage: ai-config restore <tool> or ai-config restore all"
+        log_error "Usage: ai-global restore <tool> or ai-global restore all"
         echo ""
         list_backups
         return 1
@@ -564,7 +564,7 @@ restore_tool() {
     if [[ "$found" == false ]]; then
         log_error "Tool not found: $tool_query"
         echo ""
-        echo "Use 'ai-config list' to see supported tools"
+        echo "Use 'ai-global list' to see supported tools"
         return 1
     fi
 }
@@ -724,14 +724,14 @@ add_item() {
     local input="$2"
 
     if [[ -z "$input" ]]; then
-        log_error "Usage: ai-config $type <file|github-repo>"
+        log_error "Usage: ai-global $type <file|github-repo>"
         echo ""
         echo "Examples:"
-        echo "  ai-config $type react.md"
-        echo "  ai-config $type /path/to/file.md"
-        echo "  ai-config $type user/repo"
-        echo "  ai-config $type https://github.com/user/repo"
-        echo "  ai-config $type user/repo/path/to/file.md"
+        echo "  ai-global $type react.md"
+        echo "  ai-global $type /path/to/file.md"
+        echo "  ai-global $type user/repo"
+        echo "  ai-global $type https://github.com/user/repo"
+        echo "  ai-global $type user/repo/path/to/file.md"
         return 1
     fi
 
@@ -770,8 +770,8 @@ add_item() {
 uninstall() {
     log_warn "This will:"
     echo "  1. Restore all tools to original configuration"
-    echo "  2. Remove ~/.ai-config directory"
-    echo "  3. Remove ai-config from PATH"
+    echo "  2. Remove ~/.ai-global directory"
+    echo "  3. Remove ai-global from PATH"
     echo ""
     read -p "Are you sure? (y/N) " -r
     echo ""
@@ -785,17 +785,17 @@ uninstall() {
         restore_all_tools
     fi
 
-    [[ -L /usr/local/bin/ai-config ]] && rm -f /usr/local/bin/ai-config
-    [[ -L "$HOME/.local/bin/ai-config" ]] && rm -f "$HOME/.local/bin/ai-config"
+    [[ -L /usr/local/bin/ai-global ]] && rm -f /usr/local/bin/ai-global
+    [[ -L "$HOME/.local/bin/ai-global" ]] && rm -f "$HOME/.local/bin/ai-global"
 
     rm -rf "$CONFIG_DIR"
 
-    log_ok "AI-Config uninstalled"
+    log_ok "AI-Global uninstalled"
 }
 
 # Show version
 show_version() {
-    echo "ai-config version $VERSION"
+    echo "ai-global version $VERSION"
 }
 
 # Upgrade
@@ -803,7 +803,7 @@ upgrade() {
     log_info "Checking for updates..."
 
     local remote_version
-    remote_version=$(curl -fsSL "https://raw.githubusercontent.com/nanxiaobei/ai-config/main/package.json" 2>/dev/null | grep '"version"' | head -1 | sed 's/.*"version": *"\([^"]*\)".*/\1/')
+    remote_version=$(curl -fsSL "https://raw.githubusercontent.com/nanxiaobei/ai-global/main/package.json" 2>/dev/null | grep '"version"' | head -1 | sed 's/.*"version": *"\([^"]*\)".*/\1/')
 
     if [[ -z "$remote_version" ]]; then
         log_warn "Could not check for updates"
@@ -818,9 +818,9 @@ upgrade() {
     log_info "Upgrading: $VERSION -> $remote_version"
 
     local tmp_file=$(mktemp)
-    if curl -fsSL "https://raw.githubusercontent.com/nanxiaobei/ai-config/main/ai-config" -o "$tmp_file" 2>/dev/null; then
+    if curl -fsSL "https://raw.githubusercontent.com/nanxiaobei/ai-global/main/ai-global" -o "$tmp_file" 2>/dev/null; then
         chmod +x "$tmp_file"
-        mv "$tmp_file" "$CONFIG_DIR/ai-config"
+        mv "$tmp_file" "$CONFIG_DIR/ai-global"
         log_ok "Upgraded to v$remote_version"
     else
         rm -f "$tmp_file"
@@ -832,9 +832,9 @@ upgrade() {
 # Show help
 show_help() {
     cat << EOF
-AI-Config: Unified AI Tools Configuration Manager v$VERSION
+AI-Global: Unified AI Tools Configuration Manager v$VERSION
 
-Usage: ai-config [command]
+Usage: ai-global [command]
 
 Commands:
   (default)            Scan, merge and update symlinks
@@ -848,28 +848,28 @@ Commands:
   rule <source>        Add a rule
   command <source>     Add a command
   prompt <source>      Add a prompt
-  upgrade              Upgrade ai-config to latest version
-  uninstall            Completely remove ai-config
+  upgrade              Upgrade ai-global to latest version
+  uninstall            Completely remove ai-global
   version              Show version
   help                 Show this help
 
 Shared directories:
-  ~/.ai-config/instructions.md   Instructions for all tools
-  ~/.ai-config/skills/           Reusable skills
-  ~/.ai-config/agents/           Custom agents
-  ~/.ai-config/rules/            Code rules
-  ~/.ai-config/commands/         Slash commands
-  ~/.ai-config/prompts/          Prompt templates
+  ~/.ai-global/instructions.md   Instructions for all tools
+  ~/.ai-global/skills/           Reusable skills
+  ~/.ai-global/agents/           Custom agents
+  ~/.ai-global/rules/            Code rules
+  ~/.ai-global/commands/         Slash commands
+  ~/.ai-global/prompts/          Prompt templates
 
 Examples:
-  ai-config                      # Scan, merge and update symlinks
-  ai-config skill react.md       # Add a local skill file
-  ai-config skill user/repo      # Add skills from GitHub repo (auto-detects skills/ dir)
-  ai-config agent coder.md       # Add an agent
-  ai-config restore claude       # Restore Claude's config
+  ai-global                      # Scan, merge and update symlinks
+  ai-global skill react.md       # Add a local skill file
+  ai-global skill user/repo      # Add skills from GitHub repo (auto-detects skills/ dir)
+  ai-global agent coder.md       # Add an agent
+  ai-global restore claude       # Restore Claude's config
 
 Note: When adding from GitHub, it auto-detects type subdirectories
-      (e.g., skills/, agents/, rules/) if they exist.
+       (e.g., skills/, agents/, rules/) if they exist.
 
 EOF
 }

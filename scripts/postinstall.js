@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-const configDir = path.join(os.homedir(), '.ai-config');
+const configDir = path.join(os.homedir(), '.ai-global');
 
 // Create config directory
 if (!fs.existsSync(configDir)) {

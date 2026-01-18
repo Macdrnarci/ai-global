@@ -51,19 +51,19 @@ Unified configuration manager for AI coding assistants. Edit one file, sync to a
 ### npm / pnpm / yarn / bun
 
 ```bash
-npm install -g ai-config
+npm install -g ai-global
 # or
-pnpm add -g ai-config
+pnpm add -g ai-global
 # or
-yarn global add ai-config
+yarn global add ai-global
 # or
-bun add -g ai-config
+bun add -g ai-global
 ```
 
 ### curl
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/nanxiaobei/ai-config/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/nanxiaobei/ai-global/main/install.sh | bash
 ```
 
 ## Usage
@@ -71,19 +71,19 @@ curl -fsSL https://raw.githubusercontent.com/nanxiaobei/ai-config/main/install.s
 ### First run
 
 ```bash
-ai-config
+ai-global
 ```
 
 This will:
 1. Scan your system for installed AI tools
-2. Backup original configs to `~/.ai-config/backups/`
+2. Backup original configs to `~/.ai-global/backups/`
 3. Merge instructions/skills/agents/rules/commands/prompts from all tools
 4. Create symlinks from each tool's config to shared directories
 
 ### Edit instructions
 
 ```
-~/.ai-config/instructions.md
+~/.ai-global/instructions.md
 ```
 
 Changes take effect immediately - all tools read the same file via symlinks.
@@ -92,44 +92,44 @@ Changes take effect immediately - all tools read the same file via symlinks.
 
 | Command | Description |
 |---------|-------------|
-| `ai-config` | Scan, merge and update symlinks (default) |
-| `ai-config status` | Show symlink status |
-| `ai-config list` | List supported tools |
-| `ai-config backups` | List available backups |
-| `ai-config restore <tool>` | Restore a tool's original config |
-| `ai-config restore all` | Restore all tools |
-| `ai-config skill <source>` | Add a skill (file or GitHub repo) |
-| `ai-config agent <source>` | Add an agent |
-| `ai-config rule <source>` | Add a rule |
-| `ai-config command <source>` | Add a command |
-| `ai-config prompt <source>` | Add a prompt |
-| `ai-config upgrade` | Upgrade to latest version |
-| `ai-config uninstall` | Completely remove ai-config |
-| `ai-config version` | Show version |
-| `ai-config help` | Show help |
+| `ai-global` | Scan, merge and update symlinks (default) |
+| `ai-global status` | Show symlink status |
+| `ai-global list` | List supported tools |
+| `ai-global backups` | List available backups |
+| `ai-global restore <tool>` | Restore a tool's original config |
+| `ai-global restore all` | Restore all tools |
+| `ai-global skill <source>` | Add a skill (file or GitHub repo) |
+| `ai-global agent <source>` | Add an agent |
+| `ai-global rule <source>` | Add a rule |
+| `ai-global command <source>` | Add a command |
+| `ai-global prompt <source>` | Add a prompt |
+| `ai-global upgrade` | Upgrade to latest version |
+| `ai-global uninstall` | Completely remove ai-global |
+| `ai-global version` | Show version |
+| `ai-global help` | Show help |
 
 ### Add skill/agent/rule/command/prompt
 
 ```bash
 # From local file
-ai-config skill react.md
-ai-config agent coder.md
+ai-global skill react.md
+ai-global agent coder.md
 
 # From GitHub repo (clone all .md files)
-ai-config skill user/repo
-ai-config skill https://github.com/user/repo
+ai-global skill user/repo
+ai-global skill https://github.com/user/repo
 
 # From GitHub subdirectory
-ai-config skill user/repo/skills
+ai-global skill user/repo/skills
 
 # From GitHub single file
-ai-config skill user/repo/skills/react.md
+ai-global skill user/repo/skills/react.md
 ```
 
 ## How it works
 
 ```
-~/.ai-config/
+~/.ai-global/
 ├── instructions.md  <- Shared instructions (edit this)
 ├── skills/          <- Shared skills (merged from all tools)
 ├── agents/          <- Shared agents
@@ -141,44 +141,44 @@ ai-config skill user/repo/skills/react.md
 Each AI tool's config directory contains symlinks:
 
 ~/.claude/
-├── CLAUDE.md -> ~/.ai-config/instructions.md  (symlink)
-├── skills/   -> ~/.ai-config/skills/          (symlink)
-└── commands/ -> ~/.ai-config/commands/        (symlink)
+├── CLAUDE.md -> ~/.ai-global/instructions.md  (symlink)
+├── skills/   -> ~/.ai-global/skills/          (symlink)
+└── commands/ -> ~/.ai-global/commands/        (symlink)
 
 ~/.cursor/
-├── rules/global.md -> ~/.ai-config/instructions.md (symlink)
-├── skills/         -> ~/.ai-config/skills/         (symlink)
-└── prompts/        -> ~/.ai-config/prompts/        (symlink)
+├── rules/global.md -> ~/.ai-global/instructions.md (symlink)
+├── skills/         -> ~/.ai-global/skills/         (symlink)
+└── prompts/        -> ~/.ai-global/prompts/        (symlink)
 
 ... and more tools
 ```
 
 ## Merge behavior
 
-When you run `ai-config`, it merges items from all tools by filename:
+When you run `ai-global`, it merges items from all tools by filename:
 
 - Cursor has skills: `react.md`, `typescript.md`
 - Claude has skills: `typescript.md`, `python.md`
-- Result in `~/.ai-config/skills/`: `react.md`, `typescript.md`, `python.md`
+- Result in `~/.ai-global/skills/`: `react.md`, `typescript.md`, `python.md`
 
 The first file found wins (dedup by filename).
 
 ## Uninstall
 
 ```bash
-ai-config uninstall
+ai-global uninstall
 ```
 
 This will:
 1. Restore all tools to original configuration
-2. Remove `~/.ai-config` directory
-3. Remove `ai-config` command
+2. Remove `~/.ai-global` directory
+3. Remove `ai-global` command
 
 If installed via npm:
 
 ```bash
-ai-config uninstall
-npm uninstall -g ai-config
+ai-global uninstall
+npm uninstall -g ai-global
 ```
 
 ## Example instructions.md
