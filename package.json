@@ -1,0 +1,39 @@
+{
+  "name": "ai-link",
+  "version": "1.0.0",
+  "description": "Unified configuration manager for AI coding assistants",
+  "bin": {
+    "ai-link": "./ai-link"
+  },
+  "scripts": {
+    "postinstall": "node scripts/postinstall.js"
+  },
+  "keywords": [
+    "ai",
+    "claude",
+    "cursor",
+    "copilot",
+    "gemini",
+    "coding-assistant",
+    "config",
+    "symlink"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nanxiaobei/ai-link.git"
+  },
+  "homepage": "https://github.com/nanxiaobei/ai-link#readme",
+  "engines": {
+    "node": ">=14"
+  },
+  "os": [
+    "darwin",
+    "linux"
+  ],
+  "files": [
+    "ai-link",
+    "scripts/"
+  ]
+}
