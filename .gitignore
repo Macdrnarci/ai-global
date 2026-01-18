@@ -4,11 +4,11 @@ backups/
 instructions.md
 
 # User data (optional to track)
-# skills/
-# agents/
-# rules/
-# commands/
-# prompts/
+skills/
+agents/
+rules/
+commands/
+prompts/
 
 # macOS
 .DS_Store
