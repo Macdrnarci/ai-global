@@ -1,9 +1,9 @@
 {
-  "name": "ai-link",
-  "version": "1.0.1",
+  "name": "ai-config",
+  "version": "1.0.0",
   "description": "Unified configuration manager for AI coding assistants",
   "bin": {
-    "ai-link": "./ai-link"
+    "ai-config": "./ai-config"
   },
   "scripts": {
     "postinstall": "node scripts/postinstall.js"
@@ -18,13 +18,13 @@
     "config",
     "symlink"
   ],
-  "author": "",
+  "author": "nanxiaobei",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nanxiaobei/ai-link.git"
+    "url": "https://github.com/nanxiaobei/ai-config.git"
   },
-  "homepage": "https://github.com/nanxiaobei/ai-link#readme",
+  "homepage": "https://github.com/nanxiaobei/ai-config#readme",
   "engines": {
     "node": ">=14"
   },
@@ -33,7 +33,7 @@
     "linux"
   ],
   "files": [
-    "ai-link",
+    "ai-config",
     "scripts/"
   ]
 }

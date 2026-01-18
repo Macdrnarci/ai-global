@@ -1,39 +1,34 @@
 #!/bin/bash
 
-# AI-Link Installation Script
-# Usage: curl -fsSL https://raw.githubusercontent.com/nanxiaobei/ai-link/main/install.sh | bash
+# AI-Config Installation Script
+# Usage: curl -fsSL https://raw.githubusercontent.com/nanxiaobei/ai-config/main/install.sh | bash
 
 set -e
 
+REPO_URL="https://raw.githubusercontent.com/nanxiaobei/ai-config/main"
 CONFIG_DIR="$HOME/.ai-config"
-REPO_URL="https://raw.githubusercontent.com/nanxiaobei/ai-link/main"
 
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-NC='\033[0m'
+echo "Installing AI-Config..."
 
-echo -e "${BLUE}[INFO]${NC} Installing ai-link..."
-
+# Create config directory
 mkdir -p "$CONFIG_DIR"
 
-# Download ai-link script
-curl -fsSL "$REPO_URL/ai-link" -o "$CONFIG_DIR/ai-link"
-chmod +x "$CONFIG_DIR/ai-link"
+# Download main script
+curl -fsSL "$REPO_URL/ai-config" -o "$CONFIG_DIR/ai-config"
+chmod +x "$CONFIG_DIR/ai-config"
 
 # Add to PATH
 if [[ -d /usr/local/bin ]] && [[ -w /usr/local/bin ]]; then
-    ln -sf "$CONFIG_DIR/ai-link" /usr/local/bin/ai-link
-    echo -e "${GREEN}[OK]${NC} Added ai-link to /usr/local/bin"
-elif [[ -d "$HOME/.local/bin" ]] || mkdir -p "$HOME/.local/bin"; then
-    ln -sf "$CONFIG_DIR/ai-link" "$HOME/.local/bin/ai-link"
-    echo -e "${GREEN}[OK]${NC} Added ai-link to ~/.local/bin"
-    echo -e "${BLUE}[INFO]${NC} Make sure ~/.local/bin is in your PATH"
+    ln -sf "$CONFIG_DIR/ai-config" /usr/local/bin/ai-config
+    echo "Installed to /usr/local/bin/ai-config"
 else
-    echo -e "${BLUE}[INFO]${NC} Add this to your shell config:"
-    echo "    export PATH=\"\$HOME/.ai-config:\$PATH\""
+    mkdir -p "$HOME/.local/bin"
+    ln -sf "$CONFIG_DIR/ai-config" "$HOME/.local/bin/ai-config"
+    echo "Installed to ~/.local/bin/ai-config"
+    echo ""
+    echo "Make sure ~/.local/bin is in your PATH:"
+    echo "  export PATH=\"\$HOME/.local/bin:\$PATH\""
 fi
 
 echo ""
-echo -e "${GREEN}[OK]${NC} Installation complete!"
-echo ""
-echo "Run 'ai-link' to scan and link all your AI tools"
+echo "AI-Config installed! Run 'ai-config' to get started."

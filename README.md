@@ -1,4 +1,4 @@
-# AI-Link
+# AI Config
 
 [中文文档](README_CN.md)
 
@@ -51,19 +51,19 @@ Unified configuration manager for AI coding assistants. Edit one file, sync to a
 ### npm / pnpm / yarn / bun
 
 ```bash
-npm install -g ai-link
+npm install -g ai-config
 # or
-pnpm add -g ai-link
+pnpm add -g ai-config
 # or
-yarn global add ai-link
+yarn global add ai-config
 # or
-bun add -g ai-link
+bun add -g ai-config
 ```
 
 ### curl
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/nanxiaobei/ai-link/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/nanxiaobei/ai-config/main/install.sh | bash
 ```
 
 ## Usage
@@ -71,7 +71,7 @@ curl -fsSL https://raw.githubusercontent.com/nanxiaobei/ai-link/main/install.sh 
 ### First run
 
 ```bash
-ai-link
+ai-config
 ```
 
 This will:
@@ -88,53 +88,49 @@ This will:
 
 Changes take effect immediately - all tools read the same file via symlinks.
 
-### Add a skill
-
-```
-~/.ai-config/skills/my-skill.md
-```
-
-The skill will be available in all tools that support skills.
-
 ### Commands
 
 | Command | Description |
 |---------|-------------|
-| `ai-link` | Scan, merge and update symlinks (default) |
-| `ai-link status` | Show symlink status |
-| `ai-link list` | List supported tools |
-| `ai-link backups` | List available backups |
-| `ai-link restore <tool>` | Restore a tool's original config |
-| `ai-link restore all` | Restore all tools |
-| `ai-link add <type> <file>` | Add a skill/agent/rule/command/prompt |
-| `ai-link custom <dir> [file]` | Add a custom tool |
-| `ai-link upgrade` | Upgrade ai-link to latest version |
-| `ai-link uninstall` | Completely remove ai-link |
-| `ai-link version` | Show version |
-| `ai-link help` | Show help |
+| `ai-config` | Scan, merge and update symlinks (default) |
+| `ai-config status` | Show symlink status |
+| `ai-config list` | List supported tools |
+| `ai-config backups` | List available backups |
+| `ai-config restore <tool>` | Restore a tool's original config |
+| `ai-config restore all` | Restore all tools |
+| `ai-config skill <source>` | Add a skill (file or GitHub repo) |
+| `ai-config agent <source>` | Add an agent |
+| `ai-config rule <source>` | Add a rule |
+| `ai-config command <source>` | Add a command |
+| `ai-config prompt <source>` | Add a prompt |
+| `ai-config upgrade` | Upgrade to latest version |
+| `ai-config uninstall` | Completely remove ai-config |
+| `ai-config version` | Show version |
+| `ai-config help` | Show help |
 
 ### Add skill/agent/rule/command/prompt
 
 ```bash
-ai-link add skill my-skill.md      # Add a skill
-ai-link add agent my-agent.md      # Add an agent
-ai-link add rule my-rule.md        # Add a rule
-ai-link add command my-cmd.md      # Add a command
-ai-link add prompt my-prompt.md    # Add a prompt
-```
+# From local file
+ai-config skill react.md
+ai-config agent coder.md
 
-### Add custom tool
+# From GitHub repo (clone all .md files)
+ai-config skill user/repo
+ai-config skill https://github.com/user/repo
 
-```bash
-ai-link custom .mytool                   # With default instructions.md
-ai-link custom .mytool INSTRUCTIONS.md   # With custom file
+# From GitHub subdirectory
+ai-config skill user/repo/skills
+
+# From GitHub single file
+ai-config skill user/repo/skills/react.md
 ```
 
 ## How it works
 
 ```
 ~/.ai-config/
-├── instructions.md  <- Your instructions (edit this)
+├── instructions.md  <- Shared instructions (edit this)
 ├── skills/          <- Shared skills (merged from all tools)
 ├── agents/          <- Shared agents
 ├── rules/           <- Shared rules
@@ -159,7 +155,7 @@ Each AI tool's config directory contains symlinks:
 
 ## Merge behavior
 
-When you run `ai-link`, it merges items from all tools by filename:
+When you run `ai-config`, it merges items from all tools by filename:
 
 - Cursor has skills: `react.md`, `typescript.md`
 - Claude has skills: `typescript.md`, `python.md`
@@ -170,19 +166,19 @@ The first file found wins (dedup by filename).
 ## Uninstall
 
 ```bash
-ai-link uninstall
+ai-config uninstall
 ```
 
 This will:
-1. Restore all tools to their original configuration
+1. Restore all tools to original configuration
 2. Remove `~/.ai-config` directory
-3. Remove `ai-link` command
+3. Remove `ai-config` command
 
 If installed via npm:
 
 ```bash
-ai-link uninstall
-npm uninstall -g ai-link
+ai-config uninstall
+npm uninstall -g ai-config
 ```
 
 ## Example instructions.md

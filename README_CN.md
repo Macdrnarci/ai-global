@@ -1,4 +1,4 @@
-# AI-Link
+# AI Config
 
 [English](README.md)
 
@@ -51,19 +51,19 @@ AI 编程助手统一配置管理器。编辑一个文件，同步到所有 AI �
 ### npm / pnpm / yarn / bun
 
 ```bash
-npm install -g ai-link
+npm install -g ai-config
 # 或
-pnpm add -g ai-link
+pnpm add -g ai-config
 # 或
-yarn global add ai-link
+yarn global add ai-config
 # 或
-bun add -g ai-link
+bun add -g ai-config
 ```
 
 ### curl
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/nanxiaobei/ai-link/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/nanxiaobei/ai-config/main/install.sh | bash
 ```
 
 ## 使用方法
@@ -71,7 +71,7 @@ curl -fsSL https://raw.githubusercontent.com/nanxiaobei/ai-link/main/install.sh 
 ### 首次运行
 
 ```bash
-ai-link
+ai-config
 ```
 
 这将会：
@@ -88,53 +88,49 @@ ai-link
 
 修改立即生效 - 所有工具通过软链读取同一文件。
 
-### 添加技能
-
-```
-~/.ai-config/skills/my-skill.md
-```
-
-该技能会自动同步到所有支持 skills 的工具。
-
 ### 命令列表
 
 | 命令 | 说明 |
 |------|------|
-| `ai-link` | 扫描、合并并更新软链（默认） |
-| `ai-link status` | 显示软链状态 |
-| `ai-link list` | 列出支持的工具 |
-| `ai-link backups` | 列出可用的备份 |
-| `ai-link restore <tool>` | 恢复某个工具的原始配置 |
-| `ai-link restore all` | 恢复所有工具 |
-| `ai-link add <type> <file>` | 添加 skill/agent/rule/command/prompt |
-| `ai-link custom <dir> [file]` | 添加自定义工具 |
-| `ai-link upgrade` | 升级 ai-link 到最新版本 |
-| `ai-link uninstall` | 彻底卸载 ai-link |
-| `ai-link version` | 显示版本号 |
-| `ai-link help` | 显示帮助 |
+| `ai-config` | 扫描、合并并更新软链（默认） |
+| `ai-config status` | 显示软链状态 |
+| `ai-config list` | 列出支持的工具 |
+| `ai-config backups` | 列出可用的备份 |
+| `ai-config restore <tool>` | 恢复某个工具的原始配置 |
+| `ai-config restore all` | 恢复所有工具 |
+| `ai-config skill <source>` | 添加技能（文件或 GitHub 仓库） |
+| `ai-config agent <source>` | 添加代理 |
+| `ai-config rule <source>` | 添加规则 |
+| `ai-config command <source>` | 添加命令 |
+| `ai-config prompt <source>` | 添加提示词 |
+| `ai-config upgrade` | 升级到最新版本 |
+| `ai-config uninstall` | 彻底卸载 |
+| `ai-config version` | 显示版本号 |
+| `ai-config help` | 显示帮助 |
 
 ### 添加 skill/agent/rule/command/prompt
 
 ```bash
-ai-link add skill my-skill.md      # 添加技能
-ai-link add agent my-agent.md      # 添加代理
-ai-link add rule my-rule.md        # 添加规则
-ai-link add command my-cmd.md      # 添加命令
-ai-link add prompt my-prompt.md    # 添加提示词
-```
+# 从本地文件
+ai-config skill react.md
+ai-config agent coder.md
 
-### 添加自定义工具
+# 从 GitHub 仓库（克隆所有 .md 文件）
+ai-config skill user/repo
+ai-config skill https://github.com/user/repo
 
-```bash
-ai-link custom .mytool                   # 使用默认 instructions.md
-ai-link custom .mytool INSTRUCTIONS.md   # 使用自定义文件
+# 从 GitHub 子目录
+ai-config skill user/repo/skills
+
+# 从 GitHub 单个文件
+ai-config skill user/repo/skills/react.md
 ```
 
 ## 工作原理
 
 ```
 ~/.ai-config/
-├── instructions.md  <- 你的指令（编辑这个）
+├── instructions.md  <- 共享指令（编辑这个）
 ├── skills/          <- 共享技能（从所有工具合并）
 ├── agents/          <- 共享代理
 ├── rules/           <- 共享规则
@@ -159,7 +155,7 @@ ai-link custom .mytool INSTRUCTIONS.md   # 使用自定义文件
 
 ## 合并行为
 
-运行 `ai-link` 时，会按文件名合并所有工具的内容：
+运行 `ai-config` 时，会按文件名合并所有工具的内容：
 
 - Cursor 有 skills: `react.md`, `typescript.md`
 - Claude 有 skills: `typescript.md`, `python.md`
@@ -170,19 +166,19 @@ ai-link custom .mytool INSTRUCTIONS.md   # 使用自定义文件
 ## 卸载
 
 ```bash
-ai-link uninstall
+ai-config uninstall
 ```
 
 这将会：
 1. 恢复所有工具的原始配置
 2. 删除 `~/.ai-config` 目录
-3. 移除 `ai-link` 命令
+3. 移除 `ai-config` 命令
 
 如果通过 npm 安装：
 
 ```bash
-ai-link uninstall
-npm uninstall -g ai-link
+ai-config uninstall
+npm uninstall -g ai-config
 ```
 
 ## instructions.md 示例
