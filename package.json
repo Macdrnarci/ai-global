@@ -1,6 +1,6 @@
 {
   "name": "ai-global",
-  "version": "1.2.0",
+  "version": "1.7.0",
   "description": "Unified configuration manager for AI coding assistants",
   "bin": {
     "ai-global": "ai-global"
@@ -14,6 +14,7 @@
     "cursor",
     "copilot",
     "gemini",
+    "coding-assistant",
     "coding-assistant",
     "config",
     "symlink"

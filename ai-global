@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# AI-Global: Unified AI Tools Configuration Manager
+# AI Global: Unified AI Tools Configuration Manager
 # https://github.com/nanxiaobei/ai-global
 
 set -e
@@ -14,23 +14,23 @@ RULES_DIR="$CONFIG_DIR/rules"
 COMMANDS_DIR="$CONFIG_DIR/commands"
 PROMPTS_DIR="$CONFIG_DIR/prompts"
 
-# Version (read from package.json)
-# Prefer node for correct JSON parsing; fallback to grep/sed; finally fallback to a default.
+# Version
 VERSION=""
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ -L "${BASH_SOURCE[0]}" ]]; then
+    SCRIPT_DIR="$(cd "$(dirname "$(readlink "${BASH_SOURCE[0]}")")" && pwd)"
+else
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+fi
 PACKAGE_JSON="$SCRIPT_DIR/package.json"
 
 if [[ -f "$PACKAGE_JSON" ]]; then
-    if command -v node >/dev/null 2>&1; then
-        VERSION=$(node -p "try{require(process.env.PACKAGE_JSON).version||''}catch(e){''}" 2>/dev/null PACKAGE_JSON="$PACKAGE_JSON")
-    fi
-
-    if [[ -z "$VERSION" ]]; then
-        VERSION=$(grep '"version"' "$PACKAGE_JSON" 2>/dev/null | head -1 | sed 's/.*"version": *"\([^"]*\)".*/\1/')
-    fi
+    # More robust version extraction
+    VERSION=$(grep -m 1 '"version"' "$PACKAGE_JSON" 2>/dev/null | sed -E 's/.*"version"[[:space:]]*:[[:space:]]*"([^"]+)".*/\1/' | sed 's/[[:space:]]*,$//')
 fi
 
-VERSION=${VERSION:-""}
+if [[ -z "$VERSION" ]]; then
+    VERSION="unknown"
+fi
 
 # Colors
 RED='\033[0;31m'
@@ -145,6 +145,9 @@ declare -a KNOWN_PATTERNS=(
     ".gpt-engineer|GPT Engineer|instructions.md|skills|agents|rules|.|prompts"
     ".smol|Smol Developer|instructions.md|skills|agents|rules|.|prompts"
     ".config/opencode|OpenCode Config|instructions.md|.|.|.|.|."
+    ".augment|Augment|instructions.md|.|agents|rules|.|."
+    ".codebuff|Codebuff|instructions.md|.|agents|.|.|."
+    ".codebuddy|CodeBuddy|settings.json|.|agents|.|.|."
 )
 
 # Backup a file or directory
@@ -253,7 +256,7 @@ show_status() {
                 local link_target=$(readlink "$target" 2>/dev/null || true)
                 if [[ "$link_target" == *".ai-global"* ]]; then
                     local tool_color=$(get_tool_color "$p_name")
-                    instr_output+="  ${tool_color}✓ $(beautify_path "$target")${NC}\n"
+                    instr_output+="  ${tool_color}$(beautify_path "$target")${NC}\n"
                     ((total_links++))
                 fi
             fi
@@ -286,7 +289,7 @@ show_status() {
                     local link_target=$(readlink "$target" 2>/dev/null || true)
                     if [[ "$link_target" == *".ai-global"* ]]; then
                         local tool_color=$(get_tool_color "$p_name")
-                        type_output+="  ${tool_color}✓ $(beautify_path "$target")${NC}\n"
+                        type_output+="  ${tool_color}$(beautify_path "$target")${NC}\n"
                         ((total_links++))
                     fi
                 fi
@@ -311,7 +314,7 @@ show_status() {
 list_supported() {
     log_info "Supported AI tools:"
     echo ""
-    printf "  ${BLUE}%-22s %-20s %-10s %-10s %-10s %-10s %-10s %s${NC}\n" "Directory" "Tool" "Skills" "Agents" "Rules" "Cmds" "Prompts" "Status"
+    printf "  ${BLUE}%-20s %-22s %-10s %-10s %-10s %-10s %-10s %s${NC}\n" "Tool" "Directory" "Skills" "Agents" "Rules" "Cmds" "Prompts" "Status"
     echo "  --------------------------------------------------------------------------------------------------------------------------------"
 
     for pattern in "${KNOWN_PATTERNS[@]}"; do
@@ -342,8 +345,8 @@ list_supported() {
         # Use manual padding because printf handles multibyte characters (✓) by byte count in Bash 3.2.
         # Each category block matches the header's "%-10s " (11 characters total).
         # We use indicator + 10 spaces = 11 characters.
-        printf "  %b%-22s %-20s%b %s          %s          %s          %s          %s          %b\n" \
-            "$tool_color" "$p_dir" "$p_name" "$NC" "$s_str" "$a_str" "$r_str" "$c_str" "$p_str" "$status"
+        printf "  %b%-20s %-22s%b %s          %s          %s          %s          %s          %b\n" \
+            "$tool_color" "$p_name" "$p_dir" "$NC" "$s_str" "$a_str" "$r_str" "$c_str" "$p_str" "$status"
     done
     echo ""
 }
@@ -380,7 +383,9 @@ list_backups() {
         fi
 
         local tool_color=$(get_tool_color "${tool_name//_/ }")
-        printf "  %s%-25s %-12s %s%b\n" "$tool_color" "$tool_name" "$type" "$filename" "$NC"
+        # Print the backup filename as a path prefixed with ~/ using beautify_path
+        local backup_path=$(beautify_path "$BACKUP_DIR/$filename")
+        printf "  %s%-25s %-12s %s%b\n" "$tool_color" "$tool_name" "$type" "$backup_path" "$NC"
     done <<< "$backups_list"
     echo ""
 }
@@ -778,7 +783,7 @@ download_from_github() {
                                     fi
                                 done
                             fi
-                            
+
                             # If we found items or if it's "rules" (no metadata file needed usually), we are done with this dir
                             if [[ $count -gt 0 ]] || [[ "$type" == "rule" ]]; then
                                 source_dir="$source_dir/$dir"
@@ -905,7 +910,7 @@ uninstall() {
 
     rm -rf "$CONFIG_DIR"
 
-    log_ok "AI-Global uninstalled"
+    log_ok "AI Global uninstalled"
 }
 
 # Show version
@@ -938,13 +943,21 @@ upgrade() {
         current_script=$(readlink "$current_script")
     fi
 
-    local tmp_file=$(mktemp)
-    if curl -fsSL "https://raw.githubusercontent.com/nanxiaobei/ai-global/main/ai-global" -o "$tmp_file" 2>/dev/null; then
-        chmod +x "$tmp_file"
-        mv "$tmp_file" "$current_script"
+    local exec_temp=$(mktemp)
+    local pkg_json_tmp=$(mktemp)
+    if curl -fsSL "https://raw.githubusercontent.com/nanxiaobei/ai-global/main/ai-global" -o "$exec_temp" 2>/dev/null && \
+       curl -fsSL "https://raw.githubusercontent.com/nanxiaobei/ai-global/main/package.json" -o "$pkg_json_tmp" 2>/dev/null; then
+        chmod +x "$exec_temp"
+        mv "$exec_temp" "$current_script"
+
+        # Also update package.json in the same directory as the script
+        local script_dir=$(dirname "$current_script")
+        mv "$pkg_json_tmp" "$script_dir/package.json"
+
         log_ok "Upgraded to v$remote_version"
     else
-        rm -f "$tmp_file"
+        rm -f "$exec_temp"
+        rm -f "$pkg_json_tmp"
         log_error "Failed to download update"
         return 1
     fi
@@ -952,21 +965,21 @@ upgrade() {
 
 # Show help
 show_help() {
-    echo -e "${BLUE}AI-Global: Unified AI Tools Configuration Manager${NC} v$VERSION"
+    echo -e "${BLUE}AI Global: Unified AI Tools Configuration Manager${NC} v$VERSION"
     echo ""
     echo -e "${BLUE}USAGE:${NC}"
     echo -e "  ai-global [command]"
     echo ""
     echo -e "${BLUE}CORE COMMANDS:${NC}"
-    echo -e "  ${GREEN}(default)${NC}           Scan, merge and update symlinks"
+    echo -e "  ${GREEN}(default)${NC}           Scan, merge, update symlinks"
     echo -e "  ${GREEN}status${NC}              Show symlink status"
     echo -e "  ${GREEN}list${NC}                List all supported AI tools"
     echo -e "  ${GREEN}backups${NC}             List available backups"
-    echo -e "  ${GREEN}unlink <tool>${NC}       Unlink a tool's original config"
-    echo -e "  ${GREEN}unlink all${NC}          Unlink all tools"
+    echo -e "  ${GREEN}unlink <key>${NC}        Restore a tool's original config"
+    echo -e "  ${GREEN}unlink all${NC}          Restore all tools"
     echo ""
     echo -e "${BLUE}RESOURCE MANAGEMENT:${NC}"
-    echo -e "  ${GREEN}skill <source>${NC}      Add a skill (file, GitHub repo, or new)"
+    echo -e "  ${GREEN}skill <user/repo>${NC}   Add a skill"
     echo -e "  ${GREEN}agent <source>${NC}      Add an agent"
     echo -e "  ${GREEN}rule <source>${NC}       Add a rule"
     echo -e "  ${GREEN}command <source>${NC}    Add a command"
