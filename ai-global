@@ -15,7 +15,7 @@ COMMANDS_DIR="$CONFIG_DIR/commands"
 PROMPTS_DIR="$CONFIG_DIR/prompts"
 
 # Version
-VERSION="1.12.0"
+VERSION="1.13.0"
 
 # Colors
 RED='\033[0;31m'
