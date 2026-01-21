@@ -17,9 +17,6 @@ mkdir -p "$CONFIG_DIR"
 curl -fsSL "$REPO_URL/ai-global" -o "$CONFIG_DIR/ai-global"
 chmod +x "$CONFIG_DIR/ai-global"
 
-# Download package.json for version info
-curl -fsSL "$REPO_URL/package.json" -o "$CONFIG_DIR/package.json"
-
 # Add to PATH
 if [[ -d /usr/local/bin ]] && [[ -w /usr/local/bin ]]; then
     ln -sf "$CONFIG_DIR/ai-global" /usr/local/bin/ai-global

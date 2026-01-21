@@ -105,48 +105,48 @@ ai-global skill https://github.com/user/repo
 
 ## 支持的工具
 
-| 工具              | Key                 | Instructions | Skills | Agents | Rules | Commands | Prompts |
-| ----------------- | ------------------- | :----------: | :----: | :----: | :---: | :------: | :-----: |
-| Claude Code       | `claude`            |      ✓       |   ✓    |        |       |    ✓     |         |
-| Cursor            | `cursor`            |      ✓       |   ✓    |        |       |          |    ✓    |
-| GitHub Copilot    | `github-copilot`    |      ✓       |        |        |       |          |         |
-| Factory Droid     | `factory`           |      ✓       |        |        |       |          |         |
-| Gemini CLI        | `gemini`            |      ✓       |   ✓    |        |       |    ✓     |         |
-| Windsurf          | `windsurf`          |      ✓       |   ✓    |   ✓    |   ✓   |          |         |
-| Kiro              | `kiro`              |      ✓       |        |   ✓    |       |          |         |
-| Qodo              | `qodo`              |      ✓       |        |   ✓    |       |          |         |
-| Antigravity       | `antigravity`       |      ✓       |   ✓    |        |       |    ✓     |         |
-| Continue          | `continue`          |      ✓       |        |        |   ✓   |          |    ✓    |
-| Cline             | `cline`             |      ✓       |        |        |   ✓   |          |    ✓    |
-| Roo Code          | `roo`               |      ✓       |        |        |   ✓   |          |         |
-| Sourcegraph Cody  | `cody`              |      ✓       |        |        |       |    ✓     |         |
-| CodeGPT           | `codegpt`           |      ✓       |        |        |       |          |    ✓    |
-| GPT Engineer      | `gpt-engineer`      |      ✓       |        |        |       |          |    ✓    |
-| Smol Developer    | `smol`              |      ✓       |        |        |       |          |    ✓    |
-| Amp               | `amp`               |      ✓       |        |        |       |          |         |
-| Trae              | `trae`              |      ✓       |        |        |       |          |         |
-| OpenCode          | `opencode`          |      ✓       |        |        |       |          |         |
-| OpenAI Codex      | `codex`             |      ✓       |        |        |       |          |         |
-| Aider             | `aider`             |      ✓       |        |        |       |          |         |
-| Codeium           | `codeium`           |      ✓       |        |        |       |          |         |
-| TabNine           | `tabnine`           |      ✓       |        |        |       |          |         |
-| Zed               | `zed`               |      ✓       |        |        |       |          |         |
-| Aide              | `aide`              |      ✓       |        |        |       |          |         |
-| PearAI            | `pearai`            |      ✓       |        |        |       |          |         |
-| Supermaven        | `supermaven`        |      ✓       |        |        |       |          |         |
-| CodeStory         | `codestory`         |      ✓       |        |        |       |          |         |
-| Double            | `double`            |      ✓       |        |        |       |          |         |
-| Blackbox AI       | `blackbox`          |      ✓       |        |        |       |          |         |
-| Amazon Q          | `amazonq`           |      ✓       |        |        |       |          |         |
-| Copilot Workspace | `copilot-workspace` |      ✓       |        |        |       |          |         |
-| Goose AI          | `goose`             |      ✓       |        |        |       |          |         |
-| Mentat            | `mentat`            |      ✓       |        |        |       |          |         |
-| Melty             | `melty`             |      ✓       |        |        |       |          |         |
-| Void              | `void`              |      ✓       |        |        |       |          |         |
-| Qoder             | `qoder`             |      ✓       |        |        |       |          |         |
-| Augment           | `augment`           |      ✓       |        |   ✓    |   ✓   |          |         |
-| Codebuff          | `codebuff`          |      ✓       |        |   ✓    |       |          |         |
-| CodeBuddy         | `codebuddy`         |      ✓       |        |   ✓    |       |          |         |
+| 工具              | Key                 | Global | Skills | Agents | Rules | Commands | Prompts |
+| ----------------- | ------------------- | :----: | :----: | :----: | :---: | :------: | :-----: |
+| Claude Code       | `claude`            |   ✓    |   ✓    |        |       |    ✓     |         |
+| Cursor            | `cursor`            |   ✓    |   ✓    |        |       |          |    ✓    |
+| GitHub Copilot    | `github-copilot`    |   ✓    |        |        |       |          |         |
+| Factory Droid     | `droid`             |   ✓    |        |        |       |          |         |
+| Gemini CLI        | `gemini`            |   ✓    |   ✓    |        |       |    ✓     |         |
+| Windsurf          | `windsurf`          |   ✓    |   ✓    |   ✓    |   ✓   |          |         |
+| Kiro              | `kiro`              |   ✓    |        |   ✓    |       |          |         |
+| Qodo              | `qodo`              |   ✓    |        |   ✓    |       |          |         |
+| Antigravity       | `antigravity`       |   ✓    |   ✓    |        |       |    ✓     |         |
+| Continue          | `continue`          |   ✓    |        |        |   ✓   |          |    ✓    |
+| Cline             | `cline`             |   ✓    |        |        |   ✓   |          |    ✓    |
+| Roo Code          | `roo`               |   ✓    |        |        |   ✓   |          |         |
+| Sourcegraph Cody  | `cody`              |   ✓    |        |        |       |    ✓     |         |
+| CodeGPT           | `codegpt`           |   ✓    |        |        |       |          |    ✓    |
+| GPT Engineer      | `gpt-engineer`      |   ✓    |        |        |       |          |    ✓    |
+| Smol Developer    | `smol`              |   ✓    |        |        |       |          |    ✓    |
+| Amp               | `amp`               |   ✓    |        |        |       |          |         |
+| Trae              | `trae`              |   ✓    |        |        |       |          |         |
+| OpenCode          | `opencode`          |   ✓    |        |        |       |          |         |
+| OpenAI Codex      | `codex`             |   ✓    |        |        |       |          |         |
+| Aider             | `aider`             |   ✓    |        |        |       |          |         |
+| Codeium           | `codeium`           |   ✓    |        |        |       |          |         |
+| TabNine           | `tabnine`           |   ✓    |        |        |       |          |         |
+| Zed               | `zed`               |   ✓    |        |        |       |          |         |
+| Aide              | `aide`              |   ✓    |        |        |       |          |         |
+| PearAI            | `pearai`            |   ✓    |        |        |       |          |         |
+| Supermaven        | `supermaven`        |   ✓    |        |        |       |          |         |
+| CodeStory         | `codestory`         |   ✓    |        |        |       |          |         |
+| Double            | `double`            |   ✓    |        |        |       |          |         |
+| Blackbox AI       | `blackbox`          |   ✓    |        |        |       |          |         |
+| Amazon Q          | `amazonq`           |   ✓    |        |        |       |          |         |
+| Copilot Workspace | `copilot-workspace` |   ✓    |        |        |       |          |         |
+| Goose AI          | `goose`             |   ✓    |        |        |       |          |         |
+| Mentat            | `mentat`            |   ✓    |        |        |       |          |         |
+| Melty             | `melty`             |   ✓    |        |        |       |          |         |
+| Void              | `void`              |   ✓    |        |        |       |          |         |
+| Qoder             | `qoder`             |   ✓    |        |        |       |          |         |
+| Augment           | `augment`           |   ✓    |        |   ✓    |   ✓   |          |         |
+| Codebuff          | `codebuff`          |   ✓    |        |   ✓    |       |          |         |
+| CodeBuddy         | `codebuddy`         |   ✓    |        |   ✓    |       |          |         |
 
 ## 卸载
 

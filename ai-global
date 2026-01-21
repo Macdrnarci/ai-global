@@ -15,22 +15,7 @@ COMMANDS_DIR="$CONFIG_DIR/commands"
 PROMPTS_DIR="$CONFIG_DIR/prompts"
 
 # Version
-VERSION=""
-if [[ -L "${BASH_SOURCE[0]}" ]]; then
-    SCRIPT_DIR="$(cd "$(dirname "$(readlink "${BASH_SOURCE[0]}")")" && pwd)"
-else
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-fi
-PACKAGE_JSON="$SCRIPT_DIR/package.json"
-
-if [[ -f "$PACKAGE_JSON" ]]; then
-    # More robust version extraction
-    VERSION=$(grep -m 1 '"version"' "$PACKAGE_JSON" 2>/dev/null | sed -E 's/.*"version"[[:space:]]*:[[:space:]]*"([^"]+)".*/\1/' | sed 's/[[:space:]]*,$//')
-fi
-
-if [[ -z "$VERSION" ]]; then
-    VERSION="unknown"
-fi
+VERSION="1.12.0"
 
 # Colors
 RED='\033[0;31m'
@@ -105,49 +90,49 @@ log_warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
 # Known AI tool patterns
-# Format: dir|name|instr_file|skills_dir|agents_dir|rules_dir|commands_dir|prompts_dir
+# Format: dir|key|name|instr_file|skills_dir|agents_dir|rules_dir|commands_dir|prompts_dir
 declare -a KNOWN_PATTERNS=(
-    ".claude|Claude Code|CLAUDE.md|skills|.|.|commands|."
-    ".cursor|Cursor|rules/global.md|skills|.|.|.|prompts"
-    ".factory|Factory Droid|droids/global.md|.|.|.|.|."
-    ".amp|Amp|instructions.md|.|.|.|.|."
-    ".antigravity|Antigravity|CLAUDE.md|skills|.|.|commands|."
-    ".gemini|Gemini CLI|GEMINI.md|skills|.|.|commands|."
-    ".kiro|Kiro|steering/global.md|.|agents|.|.|."
+    ".claude|claude|Claude Code|CLAUDE.md|skills|.|.|commands|."
+    ".cursor|cursor|Cursor|rules/global.md|skills|.|.|.|prompts"
+    ".factory|droid|Factory Droid|droids/global.md|.|.|.|.|."
+    ".amp|amp|Amp|instructions.md|.|.|.|.|."
+    ".antigravity|antigravity|Antigravity|CLAUDE.md|skills|.|.|commands|."
+    ".gemini|gemini|Gemini CLI|GEMINI.md|skills|.|.|commands|."
+    ".kiro|kiro|Kiro|steering/global.md|.|agents|.|.|."
     ".opencode|OpenCode|instructions.md|.|.|.|.|."
     ".qoder|Qoder|instructions.md|.|.|.|.|."
-    ".qodo|Qodo|instructions.md|.|agents|.|.|."
-    ".config/github-copilot|GitHub Copilot|instructions.md|.|.|.|.|."
-    ".aider|Aider|.aider.conf.yml|.|.|.|.|."
-    ".continue|Continue|config.json|.|.|rules|.|prompts"
-    ".codeium|Codeium|config.json|.|.|.|.|."
-    ".tabnine|TabNine|tabnine_config.json|.|.|.|.|."
-    ".sourcegraph|Sourcegraph Cody|cody.json|.|.|.|commands|."
-    ".codegpt|CodeGPT|settings.json|.|.|.|.|prompts"
-    ".windsurf|Windsurf|instructions.md|skills|agents|rules|.|."
-    ".trae|Trae|instructions.md|.|.|.|.|."
-    ".melty|Melty|instructions.md|.|.|.|.|."
-    ".void|Void|instructions.md|.|.|.|.|."
-    ".roo|Roo Code|instructions.md|.|.|rules|.|."
-    ".zed|Zed|settings.json|.|.|.|.|."
-    ".cline|Cline|instructions.md|.|.|rules|.|prompts"
-    ".aide|Aide|instructions.md|.|.|.|.|."
-    ".pear|PearAI|instructions.md|.|.|.|.|."
-    ".supermaven|Supermaven|config.json|.|.|.|.|."
-    ".codestory|CodeStory|instructions.md|.|.|.|.|."
-    ".double|Double|instructions.md|.|.|.|.|."
-    ".blackbox|Blackbox AI|config.json|.|.|.|.|."
-    ".amazonq|Amazon Q|instructions.md|.|.|.|.|."
-    ".copilot-workspace|Copilot Workspace|instructions.md|.|.|.|.|."
-    ".codex|OpenAI Codex|instructions.md|skills|agents|rules|.|."
-    ".goose|Goose AI|instructions.md|skills|agents|rules|.|."
-    ".mentat|Mentat|instructions.md|skills|agents|rules|.|."
-    ".gpt-engineer|GPT Engineer|instructions.md|skills|agents|rules|.|prompts"
-    ".smol|Smol Developer|instructions.md|skills|agents|rules|.|prompts"
-    ".config/opencode|OpenCode Config|instructions.md|.|.|.|.|."
-    ".augment|Augment|instructions.md|.|agents|rules|.|."
-    ".codebuff|Codebuff|instructions.md|.|agents|.|.|."
-    ".codebuddy|CodeBuddy|settings.json|.|agents|.|.|."
+    ".qodo|qodo|Qodo|instructions.md|.|agents|.|.|."
+    ".config/github-copilot|github-copilot|GitHub Copilot|instructions.md|.|.|.|.|."
+    ".aider|aider|Aider|.aider.conf.yml|.|.|.|.|."
+    ".continue|continue|Continue|config.json|.|.|rules|.|prompts"
+    ".codeium|codeium|Codeium|config.json|.|.|.|.|."
+    ".tabnine|tabnine|TabNine|tabnine_config.json|.|.|.|.|."
+    ".sourcegraph|cody|Sourcegraph Cody|cody.json|.|.|.|commands|."
+    ".codegpt|codegpt|CodeGPT|settings.json|.|.|.|.|prompts"
+    ".windsurf|windsurf|Windsurf|instructions.md|skills|agents|rules|.|."
+    ".trae|trae|Trae|instructions.md|.|.|.|.|."
+    ".melty|melty|Melty|instructions.md|.|.|.|.|."
+    ".void|void|Void|instructions.md|.|.|.|.|."
+    ".roo|roo|Roo Code|instructions.md|.|.|rules|.|."
+    ".zed|zed|Zed|settings.json|.|.|.|.|."
+    ".cline|cline|Cline|instructions.md|.|.|rules|.|prompts"
+    ".aide|aide|Aide|instructions.md|.|.|.|.|."
+    ".pear|pear|PearAI|instructions.md|.|.|.|.|."
+    ".supermaven|supermaven|Supermaven|config.json|.|.|.|.|."
+    ".codestory|codestory|CodeStory|instructions.md|.|.|.|.|."
+    ".double|double|Double|instructions.md|.|.|.|.|."
+    ".blackbox|blackbox|Blackbox AI|config.json|.|.|.|.|."
+    ".amazonq|amazonq|Amazon Q|instructions.md|.|.|.|.|."
+    ".copilot-workspace|copilot-workspace|Copilot Workspace|instructions.md|.|.|.|.|."
+    ".codex|codex|OpenAI Codex|instructions.md|skills|agents|rules|.|."
+    ".goose|goose|Goose AI|instructions.md|skills|agents|rules|.|."
+    ".mentat|mentat|Mentat|instructions.md|skills|agents|rules|.|."
+    ".gpt-engineer|gpt-engineer|GPT Engineer|instructions.md|skills|agents|rules|.|prompts"
+    ".smol|smol|Smol Developer|instructions.md|skills|agents|rules|.|prompts"
+    ".config/opencode|opencode|OpenCode Config|instructions.md|.|.|.|.|."
+    ".augment|augment|Augment|instructions.md|.|agents|rules|.|."
+    ".codebuff|codebuff|Codebuff|instructions.md|.|agents|.|.|."
+    ".codebuddy|codebuddy|CodeBuddy|settings.json|.|agents|.|.|."
 )
 
 # Backup a file or directory
@@ -248,7 +233,7 @@ show_status() {
     local instr_output=""
     for pattern in "${KNOWN_PATTERNS[@]}"; do
         local p_dir p_name p_instr p_skills p_agents p_rules p_cmds p_prompts
-        IFS='|' read -r p_dir p_name p_instr p_skills p_agents p_rules p_cmds p_prompts <<< "$pattern"
+        IFS='|' read -r p_dir p_key p_name p_instr p_skills p_agents p_rules p_cmds p_prompts <<< "$pattern"
 
         if [[ "$p_instr" != "." ]] && [[ "$p_instr" != *.json ]] && [[ "$p_instr" != *.yml ]]; then
             local target="$HOME/$p_dir/$p_instr"
@@ -272,7 +257,7 @@ show_status() {
         local type_output=""
         for pattern in "${KNOWN_PATTERNS[@]}"; do
             local p_dir p_name p_instr p_skills p_agents p_rules p_cmds p_prompts
-            IFS='|' read -r p_dir p_name p_instr p_skills p_agents p_rules p_cmds p_prompts <<< "$pattern"
+            IFS='|' read -r p_dir p_key p_name p_instr p_skills p_agents p_rules p_cmds p_prompts <<< "$pattern"
 
             local type_dir=""
             case "$type_name" in
@@ -314,12 +299,12 @@ show_status() {
 list_supported() {
     log_info "Supported AI tools:"
     echo ""
-    printf "  ${BLUE}%-20s %-22s %-10s %-10s %-10s %-10s %-10s %s${NC}\n" "Tool" "Directory" "Skills" "Agents" "Rules" "Cmds" "Prompts" "Status"
-    echo "  --------------------------------------------------------------------------------------------------------------------------------"
+    printf "  ${BLUE}%-18s %-18s %-20s %-6s %-6s %-7s %-5s %-8s %s${NC}\n" "Tool" "Key" "Directory" "Skills" "Agents" "Rules" "Cmds" "Prompts" "Status"
+    echo "  ---------------------------------------------------------------------------------------------------------"
 
     for pattern in "${KNOWN_PATTERNS[@]}"; do
         local p_dir p_name p_instr p_skills p_agents p_rules p_cmds p_prompts
-        IFS='|' read -r p_dir p_name p_instr p_skills p_agents p_rules p_cmds p_prompts <<< "$pattern"
+        IFS='|' read -r p_dir p_key p_name p_instr p_skills p_agents p_rules p_cmds p_prompts <<< "$pattern"
         local full_path="$HOME/$p_dir"
 
         local s_str="." a_str="." r_str="." c_str="." p_str="."
@@ -345,8 +330,8 @@ list_supported() {
         # Use manual padding because printf handles multibyte characters (✓) by byte count in Bash 3.2.
         # Each category block matches the header's "%-10s " (11 characters total).
         # We use indicator + 10 spaces = 11 characters.
-        printf "  %b%-20s %-22s%b %s          %s          %s          %s          %s          %b\n" \
-            "$tool_color" "$p_name" "$p_dir" "$NC" "$s_str" "$a_str" "$r_str" "$c_str" "$p_str" "$status"
+        printf "  %b%-18s %-18s %-22s%b %s      %s      %s      %s      %s      %b\n" \
+            "$tool_color" "$p_name" "$p_key" "$p_dir" "$NC" "$s_str" "$a_str" "$r_str" "$c_str" "$p_str" "$status"
     done
     echo ""
 }
@@ -365,8 +350,8 @@ list_backups() {
         return
     fi
 
-    printf "  ${BLUE}%-25s %-12s %s${NC}\n" "Tool" "Type" "Backup File"
-    echo "  --------------------------------------------------------------------"
+    printf "  ${BLUE}%-14s %-10s %s${NC}\n" "Tool" "Type" "Backup File"
+    echo "  -----------------------------------------------------------------------------------"
 
     while read -r filename; do
         [[ -z "$filename" ]] && continue
@@ -385,7 +370,7 @@ list_backups() {
         local tool_color=$(get_tool_color "${tool_name//_/ }")
         # Print the backup filename as a path prefixed with ~/ using beautify_path
         local backup_path=$(beautify_path "$BACKUP_DIR/$filename")
-        printf "  %s%-25s %-12s %s%b\n" "$tool_color" "$tool_name" "$type" "$backup_path" "$NC"
+        printf "  %s%-14s %-10s %s%b\n" "$tool_color" "$tool_name" "$type" "$backup_path" "$NC"
     done <<< "$backups_list"
     echo ""
 }
@@ -396,7 +381,7 @@ collect_instructions() {
     local found_count=0
 
     for pattern in "${KNOWN_PATTERNS[@]}"; do
-        IFS='|' read -r dir_name tool_name instr_file skills agents rules commands prompts <<< "$pattern"
+        IFS='|' read -r dir_name key tool_name instr_file skills agents rules commands prompts <<< "$pattern"
 
         if [[ "$instr_file" != "." ]] && [[ "$instr_file" != *.json ]] && [[ "$instr_file" != *.yml ]]; then
             local actual_path="$HOME/$dir_name/$instr_file"
@@ -415,9 +400,16 @@ collect_instructions() {
         fi
     done
 
+    # Skip if global.md already exists
+    if [[ -f "$GLOBAL_MD" ]]; then
+        log_ok "Preserved existing $GLOBAL_MD (skipped merge)"
+        return
+    fi
+
+    # Only create and merge if global.md doesn't exist
     if [[ $found_count -gt 0 ]]; then
         echo -e "$merged_content" > "$GLOBAL_MD"
-        log_ok "Merged instructions from $found_count tool(s)"
+        log_ok "Merged instructions from $found_count tool(s) to $GLOBAL_MD"
     else
         cat > "$GLOBAL_MD" << 'EOF'
 # AI Assistant Instructions
@@ -440,7 +432,7 @@ update_tools() {
     local tool_count=0
 
     for pattern in "${KNOWN_PATTERNS[@]}"; do
-        IFS='|' read -r dir_name tool_name instr_file skills agents rules commands prompts <<< "$pattern"
+        IFS='|' read -r dir_name key tool_name instr_file skills agents rules commands prompts <<< "$pattern"
         local full_path="$HOME/$dir_name"
 
         if [[ -d "$full_path" ]]; then
@@ -488,7 +480,7 @@ update_tools() {
     log_info "Creating symlinks..."
 
     for pattern in "${KNOWN_PATTERNS[@]}"; do
-        IFS='|' read -r dir_name tool_name instr_file skills agents rules commands prompts <<< "$pattern"
+        IFS='|' read -r dir_name key tool_name instr_file skills agents rules commands prompts <<< "$pattern"
         local full_path="$HOME/$dir_name"
 
         if [[ -d "$full_path" ]]; then
@@ -603,7 +595,7 @@ unlink_all_tools() {
     local unlinked_count=0
     # Scan all known patterns to find and remove any symlinks
     for pattern in "${KNOWN_PATTERNS[@]}"; do
-        IFS='|' read -r dir_name tool_name instr_file skills agents rules commands prompts <<< "$pattern"
+        IFS='|' read -r dir_name key tool_name instr_file skills agents rules commands prompts <<< "$pattern"
         if unlink_single_tool "$tool_name" "$dir_name" "$instr_file" "$skills" "$agents" "$rules" "$commands" "$prompts"; then
             ((unlinked_count++))
         fi
@@ -649,11 +641,11 @@ unlink_tool() {
     local found=false
 
     for pattern in "${KNOWN_PATTERNS[@]}"; do
-        IFS='|' read -r dir_name tool_name instr_file skills agents rules commands prompts <<< "$pattern"
+        IFS='|' read -r dir_name key tool_name instr_file skills agents rules commands prompts <<< "$pattern"
         local tool_lower=$(echo "$tool_name" | tr '[:upper:]' '[:lower:]')
         local query_lower=$(echo "$tool_query" | tr '[:upper:]' '[:lower:]')
 
-        if [[ "$tool_lower" == *"$query_lower"* ]] || [[ "$dir_name" == *"$query_lower"* ]]; then
+        if [[ "$tool_lower" == *"$query_lower"* ]] || [[ "$dir_name" == *"$query_lower"* ]] || [[ "$key" == "$query_lower" ]]; then
             if ! unlink_single_tool "$tool_name" "$dir_name" "$instr_file" "$skills" "$agents" "$rules" "$commands" "$prompts"; then
                 log_info "$tool_name is not currently linked."
             fi
@@ -923,7 +915,7 @@ upgrade() {
     log_info "Checking for updates..."
 
     local remote_version
-    remote_version=$(curl -fsSL "https://raw.githubusercontent.com/nanxiaobei/ai-global/main/package.json" 2>/dev/null | grep '"version"' | head -1 | sed 's/.*"version": *"\([^"]*\)".*/\1/')
+    remote_version=$(curl -fsSL "https://raw.githubusercontent.com/nanxiaobei/ai-global/main/ai-global" 2>/dev/null | grep '^VERSION=' | head -1 | sed 's/VERSION="\([^"]*\)"/\1/')
 
     if [[ -z "$remote_version" ]]; then
         log_warn "Could not check for updates"
@@ -944,20 +936,13 @@ upgrade() {
     fi
 
     local exec_temp=$(mktemp)
-    local pkg_json_tmp=$(mktemp)
-    if curl -fsSL "https://raw.githubusercontent.com/nanxiaobei/ai-global/main/ai-global" -o "$exec_temp" 2>/dev/null && \
-       curl -fsSL "https://raw.githubusercontent.com/nanxiaobei/ai-global/main/package.json" -o "$pkg_json_tmp" 2>/dev/null; then
+    if curl -fsSL "https://raw.githubusercontent.com/nanxiaobei/ai-global/main/ai-global" -o "$exec_temp" 2>/dev/null; then
         chmod +x "$exec_temp"
         mv "$exec_temp" "$current_script"
-
-        # Also update package.json in the same directory as the script
-        local script_dir=$(dirname "$current_script")
-        mv "$pkg_json_tmp" "$script_dir/package.json"
 
         log_ok "Upgraded to v$remote_version"
     else
         rm -f "$exec_temp"
-        rm -f "$pkg_json_tmp"
         log_error "Failed to download update"
         return 1
     fi
