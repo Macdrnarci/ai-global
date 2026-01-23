@@ -50,16 +50,12 @@ ai-global
 | `ai-global unlink <key>`      | 恢复某个工具的原始配置       |
 | `ai-global unlink all`        | 恢复所有工具                 |
 | `ai-global skill <user/repo>` | 添加技能                     |
-| `ai-global agent <source>`    | 添加代理                     |
-| `ai-global rule <source>`     | 添加规则                     |
-| `ai-global command <source>`  | 添加命令                     |
-| `ai-global prompt <source>`   | 添加提示词                   |
 | `ai-global upgrade`           | 升级到最新版本               |
 | `ai-global uninstall`         | 彻底卸载                     |
 | `ai-global version`           | 显示版本号                   |
 | `ai-global help`              | 显示帮助                     |
 
-### 添加 skill/agent/rule/command/prompt
+### 添加 skills
 
 ```bash
 ai-global skill user/repo

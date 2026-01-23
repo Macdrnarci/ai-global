@@ -50,16 +50,12 @@ This will:
 | `ai-global unlink <key>`      | Restore a tool's original config       |
 | `ai-global unlink all`        | Restore all tools                      |
 | `ai-global skill <user/repo>` | Add a skill                            |
-| `ai-global agent <source>`    | Add an agent                           |
-| `ai-global rule <source>`     | Add a rule                             |
-| `ai-global command <source>`  | Add a command                          |
-| `ai-global prompt <source>`   | Add a prompt                           |
 | `ai-global upgrade`           | Upgrade to latest version              |
 | `ai-global uninstall`         | Completely remove ai-global            |
 | `ai-global version`           | Show version                           |
 | `ai-global help`              | Show help                              |
 
-### Add skill/agent/rule/command/prompt
+### Add skills
 
 ```bash
 ai-global skill user/repo

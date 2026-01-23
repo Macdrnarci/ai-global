@@ -23,6 +23,7 @@ YELLOW='\033[0;33m'
 BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 MAGENTA='\033[0;35m'
+GRAY='\033[0;90m'
 BRIGHT_RED='\033[1;31m'
 BRIGHT_GREEN='\033[1;32m'
 BRIGHT_YELLOW='\033[1;33m'
@@ -31,19 +32,35 @@ BRIGHT_MAGENTA='\033[1;35m'
 BRIGHT_CYAN='\033[1;36m'
 NC='\033[0m'
 
-# Tool color palette (using xterm-256 colors for more variety)
-# We pick a spread of colors from the 256-color palette (avoiding too dark/grayscale)
+# Tool color palette (using bright xterm-256 colors for 26 tools)
+# All colors are bright and visually distinct for better visibility
 TOOL_COLORS=(
-    "\033[38;5;39m"  "\033[38;5;214m" "\033[38;5;118m" "\033[38;5;171m" "\033[38;5;208m"
-    "\033[38;5;45m"  "\033[38;5;190m" "\033[38;5;161m" "\033[38;5;111m" "\033[38;5;220m"
-    "\033[38;5;75m"  "\033[38;5;202m" "\033[38;5;112m" "\033[38;5;141m" "\033[38;5;210m"
-    "\033[38;5;47m"  "\033[38;5;226m" "\033[38;5;201m" "\033[38;5;81m"  "\033[38;5;215m"
-    "\033[38;5;51m"  "\033[38;5;184m" "\033[38;5;197m" "\033[38;5;105m" "\033[38;5;209m"
-    "\033[38;5;121m" "\033[38;5;227m" "\033[38;5;165m" "\033[38;5;33m"  "\033[38;5;216m"
-    "\033[38;5;159m" "\033[38;5;178m" "\033[38;5;162m" "\033[38;5;117m" "\033[38;5;221m"
-    "\033[38;5;78m"  "\033[38;5;203m" "\033[38;5;113m" "\033[38;5;142m" "\033[38;5;211m"
-    "\033[38;5;159m" "\033[38;5;178m" "\033[38;5;162m" "\033[38;5;117m" "\033[38;5;221m"
-    "\033[38;5;78m"  "\033[38;5;203m" "\033[38;5;113m" "\033[38;5;142m" "\033[38;5;211m"
+    "\033[38;5;226m" # Bright Yellow
+    "\033[38;5;46m"  # Bright Green
+    "\033[38;5;51m"  # Bright Cyan
+    "\033[38;5;180m" # Light Blue (replaced Bright Blue)
+    "\033[38;5;201m" # Bright Magenta
+    "\033[38;5;208m" # Bright Orange
+    "\033[38;5;9m"   # Red
+    "\033[38;5;11m"  # Yellow
+    "\033[38;5;10m"  # Green
+    "\033[38;5;14m"  # Cyan
+    "\033[38;5;12m"  # Blue
+    "\033[38;5;13m"  # Magenta
+    "\033[38;5;214m" # Orange
+    "\033[38;5;220m" # Gold
+    "\033[38;5;82m"  # Aquamarine
+    "\033[38;5;117m" # Light Blue
+    "\033[38;5;165m" # Purple
+    "\033[38;5;118m" # Lime Green
+    "\033[38;5;225m" # Pink
+    "\033[38;5;39m"  # Sky Blue
+    "\033[38;5;129m" # Bright Purple
+    "\033[38;5;203m" # Rose
+    "\033[38;5;77m"  # Spring Green
+    "\033[38;5;215m" # Salmon
+    "\033[38;5;159m" # Light Cyan
+    "\033[38;5;147m" # Pale Blue
 )
 
 beautify_path() {
@@ -89,7 +106,7 @@ log_warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
 # Known AI tool patterns
-# Format: dir|key|name|agents_file|skills_dir|agents_dir|rules_dir|commands_dir
+# Format: dir|key|name|agents_md|skills_dir|agents_dir|rules_dir|commands_dir
 declare -a KNOWN_PATTERNS=(
     ".claude|claude|Claude Code|CLAUDE.md|skills|agents|.|commands"
     ".codex|codex|OpenAI Codex|AGENTS.md|skills|agents|rules|."
@@ -99,8 +116,8 @@ declare -a KNOWN_PATTERNS=(
     ".gemini|antigravity|Antigravity|GEMINI.md|antigravity/skills|.|.|."
     ".gemini|gemini|Gemini CLI|GEMINI.md|skills|.|.|."
     ".kiro|kiro|Kiro CLI|steering/AGENTS.md|skills|agents|steering|."
-    ".config/opencode|OpenCode|AGENTS.md|skill|agents|.|command"
-    ".qoder|Qoder|AGENTS.md|skills|agents|rules|commands"
+    ".config/opencode|opencode|OpenCode|AGENTS.md|skill|agents|.|command"
+    ".qoder|qoder|Qoder|AGENTS.md|skills|agents|rules|commands"
     ".qodo|qodo|Qodo|AGENTS.md|.|agents|.|."
     ".copilot|copilot|GitHub Copilot|AGENTS.md|skills|agents|.|."
     ".continue|continue|Continue|AGENTS.md|.|.|rules|."
@@ -216,10 +233,10 @@ show_status() {
     # Instructions
     local instr_output=""
     for pattern in "${KNOWN_PATTERNS[@]}"; do
-        local p_dir p_name p_instr p_skills p_agents p_rules p_cmds p_prompts
-        IFS='|' read -r p_dir p_key p_name p_instr p_skills p_agents p_rules p_cmds p_prompts <<< "$pattern"
+        local p_dir p_name p_instr p_skills p_agents p_rules p_cmds
+        IFS='|' read -r p_dir p_key p_name p_instr p_skills p_agents p_rules p_cmds <<< "$pattern"
 
-        if [[ "$p_instr" != "." ]] && [[ "$p_instr" != *.json ]] && [[ "$p_instr" != *.yml ]]; then
+        if [[ "$p_instr" != "." ]] && [[ "$p_instr" == *.md ]]; then
             local target="$HOME/$p_dir/$p_instr"
             if [[ -L "$target" ]]; then
                 local link_target=$(readlink "$target" 2>/dev/null || true)
@@ -282,37 +299,81 @@ show_status() {
 list_supported() {
     log_info "Supported AI tools:"
     echo ""
-    printf "  ${BLUE}%-18s %-18s %-20s %-6s %-6s %-7s %-5s %s${NC}\n" "Tool" "Key" "Directory" "Skills" "Agents" "Rules" "Cmds" "Status"
-    echo "  --------------------------------------------------------------------------------------------------------"
+    printf "  ${BLUE}%-16s %-12s %-15s %-7s %-7s %-7s %-6s %-11s %s${NC}\n" "Tool" "Key" "Directory" "AGENTS.md" "Skills" "Agents" "Rules" "Commands" "Status"
+    echo "  ----------------------------------------------------------------------------------------------------"
 
     for pattern in "${KNOWN_PATTERNS[@]}"; do
         local p_dir p_name p_instr p_skills p_agents p_rules p_cmds
         IFS='|' read -r p_dir p_key p_name p_instr p_skills p_agents p_rules p_cmds <<< "$pattern"
         local full_path="$HOME/$p_dir"
 
-        local s_str="." a_str="." r_str="." c_str="."
+        local g_str="." s_str="." a_str="." r_str="." c_str="."
+
+        # Check what the tool supports based on KNOWN_PATTERNS
+        if [[ "$p_instr" != "." ]]; then
+            g_str="○"
+        else
+            g_str="${GRAY}.${NC}"
+        fi
+        if [[ "$p_skills" != "." ]]; then
+            s_str="○"
+        else
+            s_str="${GRAY}.${NC}"
+        fi
+        if [[ "$p_agents" != "." ]]; then
+            a_str="○"
+        else
+            a_str="${GRAY}.${NC}"
+        fi
+        if [[ "$p_rules" != "." ]]; then
+            r_str="○"
+        else
+            r_str="${GRAY}.${NC}"
+        fi
+        if [[ "$p_cmds" != "." ]]; then
+            c_str="○"
+        else
+            c_str="${GRAY}.${NC}"
+        fi
+
+        # If tool is installed, check if the configs actually exist
         if [[ -d "$full_path" ]]; then
-            [[ "$p_skills" != "." && -d "$full_path/$p_skills" ]] && s_str="✓"
-            [[ "$p_agents" != "." && -d "$full_path/$p_agents" ]] && a_str="✓"
-            [[ "$p_rules" != "." && -d "$full_path/$p_rules" ]] && r_str="✓"
-            [[ "$p_cmds" != "." && -d "$full_path/$p_cmds" ]] && c_str="✓"
+            [[ "$p_instr" != "." && "$p_instr" == *.md && -f "$full_path/$p_instr" ]] && g_str="○"
+            [[ "$p_skills" != "." && -d "$full_path/$p_skills" ]] && s_str="○"
+            [[ "$p_agents" != "." && -d "$full_path/$p_agents" ]] && a_str="○"
+            [[ "$p_rules" != "." && -d "$full_path/$p_rules" ]] && r_str="○"
+            [[ "$p_cmds" != "." && -d "$full_path/$p_cmds" ]] && c_str="○"
         fi
 
         local status=""
         local tool_color=""
+
         if [[ -d "$full_path" ]]; then
             status="${GREEN}Installed${NC}"
             tool_color=$(get_tool_color "$p_name")
         else
-            status="${YELLOW}Not found${NC}"
-            tool_color="${NC}"
+            status="${GRAY}Not found${NC}"
+            tool_color="${GRAY}"
+
+            # For not found tools, make all symbols gray too
+            if [[ "$g_str" == "○" ]]; then
+                g_str="${GRAY}○${NC}"
+            fi
+            if [[ "$s_str" == "○" ]]; then
+                s_str="${GRAY}○${NC}"
+            fi
+            if [[ "$a_str" == "○" ]]; then
+                a_str="${GRAY}○${NC}"
+            fi
+            if [[ "$r_str" == "○" ]]; then
+                r_str="${GRAY}○${NC}"
+            fi
+            if [[ "$c_str" == "○" ]]; then
+                c_str="${GRAY}○${NC}"
+            fi
         fi
 
-        # Use manual padding because printf handles multibyte characters (✓) by byte count in Bash 3.2.
-        # Each category block matches the header's "%-10s " (11 characters total).
-        # We use indicator + 10 spaces = 11 characters.
-        printf "  %b%-18s %-18s %-22s%b %s      %s      %s      %s      %b\n" \
-            "$tool_color" "$p_name" "$p_key" "$p_dir" "$NC" "$s_str" "$a_str" "$r_str" "$c_str" "$status"
+        echo -e "  ${tool_color}${p_name:0:16}$(printf '%*s' $((16 - ${#p_name})) | tr ' ' ' ') ${p_key:0:12}$(printf '%*s' $((12 - ${#p_key})) | tr ' ' ' ') ${p_dir:0:19}$(printf '%*s' $((19 - ${#p_dir})) | tr ' ' ' ')${NC} ${g_str}       ${s_str}       ${a_str}       ${r_str}       ${c_str}        ${status}"
     done
     echo ""
 }
@@ -331,7 +392,7 @@ list_backups() {
         return
     fi
 
-    printf "  ${BLUE}%-14s %-10s %s${NC}\n" "Tool" "Type" "Backup File"
+    printf "  ${BLUE}%-18s %-10s %s${NC}\n" "Tool" "Type" "Backup File"
     echo "  -----------------------------------------------------------------------------------"
 
     while read -r filename; do
@@ -340,8 +401,10 @@ list_backups() {
         local type=""
 
         # Improved regex to handle various path characters
-        if [[ "$filename" =~ ^(.+)\.([^\.]+)\.([0-9]+)$ ]]; then
-            tool_name="${BASH_REMATCH[1]}"
+        # Format: backup_name.type.timestamp where backup_name has '/' replaced with '_'
+        if [[ "$filename" =~ ^(.+)\.([^.]+)\.([0-9]+)$ ]]; then
+            # Convert underscores back to slashes for display
+            tool_name="${BASH_REMATCH[1]//_//}"
             type="${BASH_REMATCH[2]}"
         else
             tool_name="$filename"
@@ -351,21 +414,21 @@ list_backups() {
         local tool_color=$(get_tool_color "${tool_name//_/ }")
         # Print the backup filename as a path prefixed with ~/ using beautify_path
         local backup_path=$(beautify_path "$BACKUP_DIR/$filename")
-        printf "  %s%-14s %-10s %s%b\n" "$tool_color" "$tool_name" "$type" "$backup_path" "$NC"
+        printf "  %s%-18s %-10s %s%b\n" "$tool_color" "$tool_name" "$type" "$backup_path" "$NC"
     done <<< "$backups_list"
     echo ""
 }
 
-# Collect and merge instructions from all tools
-collect_instructions() {
+# Collect and merge AGENTS.md from all tools
+collect_agents_md() {
     local merged_content=""
     local found_count=0
 
     for pattern in "${KNOWN_PATTERNS[@]}"; do
-        IFS='|' read -r dir_name key tool_name agents_file skills agents rules commands <<< "$pattern"
+        IFS='|' read -r dir_name key tool_name agents_md skills agents rules commands <<< "$pattern"
 
-        if [[ "$agents_file" != "." ]] && [[ "$agents_file" != *.json ]] && [[ "$agents_file" != *.yml ]]; then
-            local actual_path="$HOME/$dir_name/$agents_file"
+        if [[ "$agents_md" != "." ]] && [[ "$agents_md" == *.md ]]; then
+            local actual_path="$HOME/$dir_name/$agents_md"
             [[ -L "$actual_path" ]] && continue
 
             if [[ -f "$actual_path" ]]; then
@@ -408,12 +471,12 @@ update_tools() {
 
     mkdir -p "$SKILLS_DIR" "$AGENTS_DIR" "$RULES_DIR" "$COMMANDS_DIR" "$BACKUP_DIR"
 
-    collect_instructions
+    collect_agents_md
 
     local tool_count=0
 
     for pattern in "${KNOWN_PATTERNS[@]}"; do
-        IFS='|' read -r dir_name key tool_name agents_file skills agents rules commands <<< "$pattern"
+        IFS='|' read -r dir_name key tool_name agents_md skills agents rules commands <<< "$pattern"
         local full_path="$HOME/$dir_name"
 
         if [[ -d "$full_path" ]]; then
@@ -421,8 +484,8 @@ update_tools() {
             echo -e "${GREEN}[OK]${NC} ${color}Found: $tool_name${NC}"
             ((tool_count++))
 
-            if [[ "$agents_file" != "." ]] && [[ "$agents_file" != *.json ]] && [[ "$agents_file" != *.yml ]]; then
-                local actual_path="$HOME/$dir_name/$agents_file"
+            if [[ "$agents_md" != "." ]] && [[ "$agents_md" == *.md ]]; then
+                local actual_path="$HOME/$dir_name/$agents_md"
                 backup_item "$actual_path" "$dir_name" "instructions"
             fi
 
@@ -459,13 +522,13 @@ update_tools() {
     log_info "Creating symlinks..."
 
     for pattern in "${KNOWN_PATTERNS[@]}"; do
-        IFS='|' read -r dir_name key tool_name agents_file skills agents rules commands <<< "$pattern"
+        IFS='|' read -r dir_name key tool_name agents_md skills agents rules commands <<< "$pattern"
         local full_path="$HOME/$dir_name"
 
         if [[ -d "$full_path" ]]; then
             local tool_color=$(get_tool_color "$tool_name")
-            if [[ "$agents_file" != "." ]] && [[ "$agents_file" != *.json ]] && [[ "$agents_file" != *.yml ]]; then
-                local target="$HOME/$dir_name/$agents_file"
+            if [[ "$agents_md" != "." ]] && [[ "$agents_md" == *.md ]]; then
+                local target="$HOME/$dir_name/$agents_md"
                 create_symlink "$GLOBAL_MD" "$target"
                 printf "${tool_color}%-40s -> %s${NC}\n" "$(beautify_path "$target")" "$(beautify_path "$GLOBAL_MD")"
             fi
@@ -496,7 +559,7 @@ update_tools() {
 unlink_single_tool() {
     local tool_name="$1"
     local dir_name="$2"
-    local agents_file="$3"
+    local agents_md="$3"
     local skills="$4"
     local agents="$5"
     local rules="$6"
@@ -507,8 +570,8 @@ unlink_single_tool() {
     local worked=false
 
     # Check for instructions link
-    if [[ "$agents_file" != "." ]]; then
-        local target="$HOME/$dir_name/$agents_file"
+    if [[ "$agents_md" != "." ]]; then
+        local target="$HOME/$dir_name/$agents_md"
         if [[ -L "$target" ]]; then
             local link_target=$(readlink "$target" 2>/dev/null || true)
             if [[ "$link_target" == *".ai-global"* ]]; then
@@ -571,8 +634,8 @@ unlink_all_tools() {
     local unlinked_count=0
     # Scan all known patterns to find and remove any symlinks
     for pattern in "${KNOWN_PATTERNS[@]}"; do
-        IFS='|' read -r dir_name key tool_name agents_file skills agents rules commands <<< "$pattern"
-        if unlink_single_tool "$tool_name" "$dir_name" "$agents_file" "$skills" "$agents" "$rules" "$commands"; then
+        IFS='|' read -r dir_name key tool_name agents_md skills agents rules commands <<< "$pattern"
+        if unlink_single_tool "$tool_name" "$dir_name" "$agents_md" "$skills" "$agents" "$rules" "$commands"; then
             ((unlinked_count++))
         fi
     done
@@ -617,12 +680,12 @@ unlink_tool() {
     local found=false
 
     for pattern in "${KNOWN_PATTERNS[@]}"; do
-        IFS='|' read -r dir_name key tool_name agents_file skills agents rules commands <<< "$pattern"
+        IFS='|' read -r dir_name key tool_name agents_md skills agents rules commands <<< "$pattern"
         local tool_lower=$(echo "$tool_name" | tr '[:upper:]' '[:lower:]')
         local query_lower=$(echo "$tool_query" | tr '[:upper:]' '[:lower:]')
 
         if [[ "$tool_lower" == *"$query_lower"* ]] || [[ "$dir_name" == *"$query_lower"* ]] || [[ "$key" == "$query_lower" ]]; then
-            if ! unlink_single_tool "$tool_name" "$dir_name" "$agents_file" "$skills" "$agents" "$rules" "$commands"; then
+            if ! unlink_single_tool "$tool_name" "$dir_name" "$agents_md" "$skills" "$agents" "$rules" "$commands"; then
                 log_info "$tool_name is not currently linked."
             fi
             found=true
@@ -808,50 +871,32 @@ download_from_github() {
     fi
 }
 
-# Add item to a type directory
-add_item() {
-    local type="$1"
-    local input="$2"
+# Add skill to skills directory
+add_skill() {
+    local input="$1"
 
     if [[ -z "$input" ]]; then
-        log_error "Usage: ai-global $type <file|github-repo>"
+        log_error "Usage: ai-global skill <file|github-repo>"
         echo ""
         echo "Examples:"
-        echo "  ai-global $type react.md"
-        echo "  ai-global $type /path/to/file.md"
-        echo "  ai-global $type user/repo"
-        echo "  ai-global $type https://github.com/user/repo"
-        echo "  ai-global $type user/repo/path/to/file.md"
+        echo "  ai-global skill user/repo"
+        echo "  ai-global skill https://github.com/user/repo"
         return 1
     fi
 
-    local target_dir=""
-    case "$type" in
-        skill)   target_dir="$SKILLS_DIR" ;;
-        agent)   target_dir="$AGENTS_DIR" ;;
-        rule)    target_dir="$RULES_DIR" ;;
-        command) target_dir="$COMMANDS_DIR" ;;
-    esac
-
+    local target_dir="$SKILLS_DIR"
     mkdir -p "$target_dir"
 
     # Check if it's a GitHub reference
     if is_github_ref "$input"; then
-        download_from_github "$type" "$input" "$target_dir"
-    elif [[ -f "$input" ]]; then
-        # Local file
-        local basename=$(basename "$input")
-        cp "$input" "$target_dir/$basename"
-        log_ok "Added $type: $target_dir/$basename"
+        download_from_github "skill" "$input" "$target_dir"
     else
-        # Create new file
-        local target_file="$target_dir/$input"
-        if [[ ! "$input" == *.md ]]; then
-            target_file="$target_dir/${input}.md"
-        fi
-        touch "$target_file"
-        log_ok "Created $type: $target_file"
-        echo "Edit: $target_file"
+        log_error "Invalid input. Please provide a GitHub repository."
+        echo ""
+        echo "Examples:"
+        echo "  ai-global skill user/repo"
+        echo "  ai-global skill https://github.com/user/repo"
+        return 1
     fi
 }
 
@@ -940,9 +985,6 @@ show_help() {
     echo ""
     echo -e "${BLUE}RESOURCE MANAGEMENT:${NC}"
     echo -e "  ${GREEN}skill <user/repo>${NC}   Add a skill"
-    echo -e "  ${GREEN}agent <source>${NC}      Add an agent"
-    echo -e "  ${GREEN}rule <source>${NC}       Add a rule"
-    echo -e "  ${GREEN}command <source>${NC}    Add a command"
     echo ""
     echo -e "${BLUE}SYSTEM COMMANDS:${NC}"
     echo -e "  ${GREEN}upgrade${NC}             Upgrade ai-global to latest version"
@@ -965,11 +1007,11 @@ main() {
         help|--help|-h) show_help; exit 0 ;;
         list) list_supported; exit 0 ;;
         version|-v|--version) show_version; exit 0 ;;
-        skill|agent|rule|command|unlink|status|backups|upgrade|uninstall)
+        skill|unlink|status|backups|upgrade|uninstall)
             if [[ ! -d "$CONFIG_DIR" ]]; then
                 log_info "No configuration found. Running initial scan..."
                 update_tools
-                [[ "$cmd" == "skill" || "$cmd" == "agent" || "$cmd" == "rule" || "$cmd" == "command" || "$cmd" == "status" ]] || exit 0
+                [[ "$cmd" == "skill" || "$cmd" == "status" ]] || exit 0
             fi
             ;;
         version|-v|--version|help|--help|-h) ;;
@@ -982,10 +1024,7 @@ main() {
         list)         list_supported ;;
         backups)      list_backups ;;
         unlink)       unlink_tool "$2" ;;
-        skill)        add_item "skill" "$2" ;;
-        agent)        add_item "agent" "$2" ;;
-        rule)         add_item "rule" "$2" ;;
-        command)      add_item "command" "$2" ;;
+        skill)        add_skill "$2" ;;
         upgrade)      upgrade ;;
         uninstall)    uninstall ;;
         version|-v|--version) show_version ;;
