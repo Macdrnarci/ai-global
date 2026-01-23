@@ -106,34 +106,34 @@ log_warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
 # Known AI tool patterns
-# Format: dir|key|name|agents_md|skills_dir|agents_dir|rules_dir|commands_dir
+# Format: dir|key|name|agents_md|rules_dir|commands_dir|skills_dir|agents_dir
 declare -a KNOWN_PATTERNS=(
-    ".claude|claude|Claude Code|CLAUDE.md|skills|agents|.|commands"
-    ".codex|codex|OpenAI Codex|AGENTS.md|skills|agents|rules|."
-    ".cursor|cursor|Cursor|rules/AGENTS.md|skills|agents|rules|commands"
-    ".factory|droid|Factory Droid|AGENTS.md|skills|droids|rules|commands"
-    ".amp|amp|Amp|AGENTS.md|skills|.|rules|commands"
-    ".gemini|antigravity|Antigravity|GEMINI.md|antigravity/skills|.|.|."
-    ".gemini|gemini|Gemini CLI|GEMINI.md|skills|.|.|."
-    ".kiro|kiro|Kiro CLI|steering/AGENTS.md|skills|agents|steering|."
-    ".config/opencode|opencode|OpenCode|AGENTS.md|skill|agents|.|command"
-    ".qoder|qoder|Qoder|AGENTS.md|skills|agents|rules|commands"
-    ".qodo|qodo|Qodo|AGENTS.md|.|agents|.|."
-    ".copilot|copilot|GitHub Copilot|AGENTS.md|skills|agents|.|."
-    ".continue|continue|Continue|AGENTS.md|.|.|rules|."
-    ".codeium/windsurf|windsurf|Windsurf|AGENTS.md|skills|.|rules|."
-    ".roo|roo|Roo Code|AGENTS.md|skills|.|rules|commands"
-    ".cline|cline|Cline|AGENTS.md|skills|.|rules|."
-    ".blackbox|blackbox|Blackbox AI|.|skills|.|.|."
-    ".goose|goose|Goose AI|AGENTS.md|skills|.|.|."
-    ".augment|augment|Augment|AGENTS.md|.|agents|rules|commands"
-    ".clawdbot|clawdbot|Clawdbot Code|AGENTS.md|skills|subagents|.|."
-    ".commandcode|commandcode|Command Code|AGENTS.md|skills|.|.|commands"
-    ".kilocode|kilocode|Kilo Code|AGENTS.md|skills|.|rules|commands"
-    ".neovate|neovate|Neovate|AGENTS.md|skills|agents|.|commands"
-    ".openhands|openhands|OpenHands|AGENTS.md|skills|.|.|."
-    ".trae|trae|TRAE|AGENTS.md|skills|.|rules|."
-    ".zencoder|zencoder|Zencoder|AGENTS.md|skills|.|rules|."
+    ".claude|claude|Claude Code|CLAUDE.md|.|commands|skills|agents"
+    ".codex|codex|OpenAI Codex|AGENTS.md|rules|.|skills|agents"
+    ".cursor|cursor|Cursor|AGENTS.md|rules|commands|skills|agents"
+    ".factory|droid|Factory Droid|AGENTS.md|rules|commands|skills|droids"
+    ".amp|amp|Amp|AGENTS.md|rules|commands|skills|."
+    ".gemini|antigravity|Antigravity|GEMINI.md|.|.|antigravity/skills|."
+    ".gemini|gemini|Gemini CLI|GEMINI.md|.|.|skills|."
+    ".kiro|kiro|Kiro CLI|steering/AGENTS.md|steering|.|skills|agents"
+    ".config/opencode|opencode|OpenCode|AGENTS.md|.|command|skill|agents"
+    ".qoder|qoder|Qoder|AGENTS.md|rules|commands|skills|agents"
+    ".qodo|qodo|Qodo|AGENTS.md|.|.|.|agents"
+    ".copilot|copilot|GitHub Copilot|AGENTS.md|.|.|skills|agents"
+    ".continue|continue|Continue|AGENTS.md|rules|.|.|."
+    ".codeium/windsurf|windsurf|Windsurf|AGENTS.md|rules|.|skills|."
+    ".roo|roo|Roo Code|AGENTS.md|rules|commands|skills|."
+    ".cline|cline|Cline|AGENTS.md|rules|.|skills|."
+    ".blackbox|blackbox|Blackbox AI|.|.|.|skills|."
+    ".goose|goose|Goose AI|AGENTS.md|.|.|skills|."
+    ".augment|augment|Augment|AGENTS.md|rules|commands|.|agents"
+    ".clawdbot|clawdbot|Clawdbot Code|AGENTS.md|.|.|skills|subagents"
+    ".commandcode|commandcode|Command Code|AGENTS.md|.|.|skills|."
+    ".kilocode|kilocode|Kilo Code|AGENTS.md|rules|commands|skills|."
+    ".neovate|neovate|Neovate|AGENTS.md|.|commands|skills|agents"
+    ".openhands|openhands|OpenHands|AGENTS.md|.|.|skills|."
+    ".trae|trae|TRAE|AGENTS.md|rules|.|skills|."
+    ".zencoder|zencoder|Zencoder|AGENTS.md|rules|.|skills|."
 )
 
 # Backup a file or directory
@@ -233,7 +233,7 @@ show_status() {
     local instr_output=""
     for pattern in "${KNOWN_PATTERNS[@]}"; do
         local p_dir p_name p_instr p_skills p_agents p_rules p_cmds
-        IFS='|' read -r p_dir p_key p_name p_instr p_skills p_agents p_rules p_cmds <<< "$pattern"
+        IFS='|' read -r p_dir p_key p_name p_instr p_rules p_cmds p_skills p_agents <<< "$pattern"
 
         if [[ "$p_instr" != "." ]] && [[ "$p_instr" == *.md ]]; then
             local target="$HOME/$p_dir/$p_instr"
@@ -253,18 +253,18 @@ show_status() {
         echo -e -n "$instr_output"
     fi
 
-    for type_name in skills agents rules commands; do
+    for type_name in rules commands skills agents; do
         local type_output=""
         for pattern in "${KNOWN_PATTERNS[@]}"; do
             local p_dir p_name p_instr p_skills p_agents p_rules p_cmds
-            IFS='|' read -r p_dir p_key p_name p_instr p_skills p_agents p_rules p_cmds <<< "$pattern"
+            IFS='|' read -r p_dir p_key p_name p_instr p_rules p_cmds p_skills p_agents <<< "$pattern"
 
             local type_dir=""
             case "$type_name" in
-                skills)   type_dir="$p_skills" ;;
-                agents)   type_dir="$p_agents" ;;
                 rules)    type_dir="$p_rules" ;;
                 commands) type_dir="$p_cmds" ;;
+                skills)   type_dir="$p_skills" ;;
+                agents)   type_dir="$p_agents" ;;
             esac
 
             if [[ "$type_dir" != "." ]]; then
@@ -291,19 +291,19 @@ show_status() {
     fi
 
     echo ""
-    log_info "Shared items: skills=$(count_items "$SKILLS_DIR"), agents=$(count_items "$AGENTS_DIR"), rules=$(count_items "$RULES_DIR"), commands=$(count_items "$COMMANDS_DIR")"
+    log_info "Shared items: rules=$(count_items "$RULES_DIR"), commands=$(count_items "$COMMANDS_DIR"), skills=$(count_items "$SKILLS_DIR"), agents=$(count_items "$AGENTS_DIR")"
 }
 
 # List supported tools
 list_supported() {
     log_info "Supported AI tools:"
     echo ""
-    printf "  ${BLUE}%-16s %-12s %-15s %-7s %-7s %-7s %-6s %-11s %s${NC}\n" "Tool" "Key" "Directory" "AGENTS.md" "Skills" "Agents" "Rules" "Commands" "Status"
+    printf "  ${BLUE}%-16s %-12s %-15s %-7s %-7s %-7s %-6s %-11s %s${NC}\n" "Tool" "Key" "Directory" "AGENTS.md" "Rules" "Commands" "Skills" "Agents" "Status"
     echo "  ----------------------------------------------------------------------------------------------------"
 
     for pattern in "${KNOWN_PATTERNS[@]}"; do
         local p_dir p_name p_instr p_skills p_agents p_rules p_cmds
-        IFS='|' read -r p_dir p_key p_name p_instr p_skills p_agents p_rules p_cmds <<< "$pattern"
+        IFS='|' read -r p_dir p_key p_name p_instr p_rules p_cmds p_skills p_agents <<< "$pattern"
         local full_path="$HOME/$p_dir"
 
         local g_str="." s_str="." a_str="." r_str="." c_str="."
@@ -372,7 +372,7 @@ list_supported() {
             fi
         fi
 
-        echo -e "  ${tool_color}${p_name:0:16}$(printf '%*s' $((16 - ${#p_name})) | tr ' ' ' ') ${p_key:0:12}$(printf '%*s' $((12 - ${#p_key})) | tr ' ' ' ') ${p_dir:0:19}$(printf '%*s' $((19 - ${#p_dir})) | tr ' ' ' ')${NC} ${g_str}       ${s_str}       ${a_str}       ${r_str}       ${c_str}        ${status}"
+        echo -e "  ${tool_color}${p_name:0:16}$(printf '%*s' $((16 - ${#p_name})) | tr ' ' ' ') ${p_key:0:12}$(printf '%*s' $((12 - ${#p_key})) | tr ' ' ' ') ${p_dir:0:19}$(printf '%*s' $((19 - ${#p_dir})) | tr ' ' ' ')${NC} ${g_str}       ${r_str}       ${c_str}       ${s_str}       ${a_str}        ${status}"
     done
     echo ""
 }
@@ -424,7 +424,7 @@ collect_agents_md() {
     local found_count=0
 
     for pattern in "${KNOWN_PATTERNS[@]}"; do
-        IFS='|' read -r dir_name key tool_name agents_md skills agents rules commands <<< "$pattern"
+        IFS='|' read -r dir_name key tool_name agents_md rules commands skills agents <<< "$pattern"
 
         if [[ "$agents_md" != "." ]] && [[ "$agents_md" == *.md ]]; then
             local actual_path="$HOME/$dir_name/$agents_md"
@@ -482,7 +482,7 @@ update_tools() {
     local tool_count=0
 
     for pattern in "${KNOWN_PATTERNS[@]}"; do
-        IFS='|' read -r dir_name key tool_name agents_md skills agents rules commands <<< "$pattern"
+        IFS='|' read -r dir_name key tool_name agents_md rules commands skills agents <<< "$pattern"
         local full_path="$HOME/$dir_name"
 
         if [[ -d "$full_path" ]]; then
@@ -495,23 +495,23 @@ update_tools() {
                 backup_item "$actual_path" "$dir_name" "AGENTS.md"
             fi
 
-            for type_name in skills agents rules commands; do
+            for type_name in rules commands skills agents; do
                 local type_dir=""
                 case "$type_name" in
-                    skills) type_dir="$skills" ;;
-                    agents) type_dir="$agents" ;;
                     rules) type_dir="$rules" ;;
                     commands) type_dir="$commands" ;;
+                    skills) type_dir="$skills" ;;
+                    agents) type_dir="$agents" ;;
                 esac
                 if [[ "$type_dir" != "." ]]; then
                     local path="$HOME/$dir_name/$type_dir"
                     backup_item "$path" "$dir_name" "$type_name"
                     local target_dir=""
                     case "$type_name" in
-                        skills) target_dir="$SKILLS_DIR" ;;
-                        agents) target_dir="$AGENTS_DIR" ;;
                         rules) target_dir="$RULES_DIR" ;;
                         commands) target_dir="$COMMANDS_DIR" ;;
+                        skills) target_dir="$SKILLS_DIR" ;;
+                        agents) target_dir="$AGENTS_DIR" ;;
                     esac
                     merge_items "$path" "$target_dir" "$type_name" "$tool_name"
                 fi
@@ -528,7 +528,7 @@ update_tools() {
     log_info "Creating symlinks..."
 
     for pattern in "${KNOWN_PATTERNS[@]}"; do
-        IFS='|' read -r dir_name key tool_name agents_md skills agents rules commands <<< "$pattern"
+        IFS='|' read -r dir_name key tool_name agents_md rules commands skills agents <<< "$pattern"
         local full_path="$HOME/$dir_name"
 
         if [[ -d "$full_path" ]]; then
@@ -539,14 +539,14 @@ update_tools() {
                 printf "${tool_color}%-40s -> %s${NC}\n" "$(beautify_path "$target")" "$(beautify_path "$AGENTS_MD")"
             fi
 
-            for type_name in skills agents rules commands; do
+            for type_name in rules commands skills agents; do
                 local type_dir=""
                 local source_dir=""
                 case "$type_name" in
-                    skills) type_dir="$skills"; source_dir="$SKILLS_DIR" ;;
-                    agents) type_dir="$agents"; source_dir="$AGENTS_DIR" ;;
                     rules) type_dir="$rules"; source_dir="$RULES_DIR" ;;
                     commands) type_dir="$commands"; source_dir="$COMMANDS_DIR" ;;
+                    skills) type_dir="$skills"; source_dir="$SKILLS_DIR" ;;
+                    agents) type_dir="$agents"; source_dir="$AGENTS_DIR" ;;
                 esac
                 if [[ "$type_dir" != "." ]]; then
                     local target="$HOME/$dir_name/$type_dir"
@@ -558,7 +558,7 @@ update_tools() {
     done
 
     echo ""
-    log_info "Done! Shared: skills=$(count_items "$SKILLS_DIR"), agents=$(count_items "$AGENTS_DIR"), rules=$(count_items "$RULES_DIR"), commands=$(count_items "$COMMANDS_DIR")"
+    log_info "Done! Shared: rules=$(count_items "$RULES_DIR"), commands=$(count_items "$COMMANDS_DIR"), skills=$(count_items "$SKILLS_DIR"), agents=$(count_items "$AGENTS_DIR")"
 }
 
 # Unlink a single tool
@@ -566,10 +566,10 @@ unlink_single_tool() {
     local tool_name="$1"
     local dir_name="$2"
     local agents_md="$3"
-    local skills="$4"
-    local agents="$5"
-    local rules="$6"
-    local commands="$7"
+    local rules="$4"
+    local commands="$5"
+    local skills="$6"
+    local agents="$7"
     local silent="${8:-false}"
 
     local backup_name=$(echo "$dir_name" | tr '/' '_')
@@ -589,13 +589,13 @@ unlink_single_tool() {
     fi
 
     # Check for components links
-    for type_name in skills agents rules commands; do
+    for type_name in rules commands skills agents; do
         local type_dir=""
         case "$type_name" in
-            skills) type_dir="$skills" ;;
-            agents) type_dir="$agents" ;;
             rules) type_dir="$rules" ;;
             commands) type_dir="$commands" ;;
+            skills) type_dir="$skills" ;;
+            agents) type_dir="$agents" ;;
         esac
         if [[ "$type_dir" != "." ]]; then
             local target="$HOME/$dir_name/$type_dir"
@@ -639,8 +639,8 @@ unlink_all_tools() {
     local unlinked_count=0
     # Scan all known patterns to find and remove any symlinks
     for pattern in "${KNOWN_PATTERNS[@]}"; do
-        IFS='|' read -r dir_name key tool_name agents_md skills agents rules commands <<< "$pattern"
-        if unlink_single_tool "$tool_name" "$dir_name" "$agents_md" "$skills" "$agents" "$rules" "$commands"; then
+        IFS='|' read -r dir_name key tool_name agents_md rules commands skills agents <<< "$pattern"
+        if unlink_single_tool "$tool_name" "$dir_name" "$agents_md" "$rules" "$commands" "$skills" "$agents"; then
             ((unlinked_count++))
         fi
     done
@@ -685,12 +685,12 @@ unlink_tool() {
     local found=false
 
     for pattern in "${KNOWN_PATTERNS[@]}"; do
-        IFS='|' read -r dir_name key tool_name agents_md skills agents rules commands <<< "$pattern"
+        IFS='|' read -r dir_name key tool_name agents_md rules commands skills agents <<< "$pattern"
         local tool_lower=$(echo "$tool_name" | tr '[:upper:]' '[:lower:]')
         local query_lower=$(echo "$tool_query" | tr '[:upper:]' '[:lower:]')
 
         if [[ "$tool_lower" == *"$query_lower"* ]] || [[ "$dir_name" == *"$query_lower"* ]] || [[ "$key" == "$query_lower" ]]; then
-            if ! unlink_single_tool "$tool_name" "$dir_name" "$agents_md" "$skills" "$agents" "$rules" "$commands"; then
+            if ! unlink_single_tool "$tool_name" "$dir_name" "$agents_md" "$rules" "$commands" "$skills" "$agents"; then
                 log_info "$tool_name is not currently linked."
             fi
             found=true
