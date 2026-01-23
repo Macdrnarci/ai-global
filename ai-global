@@ -14,7 +14,7 @@ SUBAGENTS_DIR="$CONFIG_DIR/agents"
 BACKUPS_DIR="$CONFIG_DIR/backups"
 
 # Version
-VERSION="1.14.0"
+VERSION="1.15.0"
 
 # Colors
 RED='\033[0;31m'
