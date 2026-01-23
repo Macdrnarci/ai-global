@@ -66,7 +66,7 @@ ai-global skill https://github.com/user/repo
 
 ```
 ~/.ai-global/
-├── AGENTS.md        <- Shared global (edit this)
+├── AGENTS.md        <- Shared AGENTS.md (edit this)
 ├── skills/          <- Shared skills (merged from all tools)
 ├── agents/          <- Shared agents
 ├── rules/           <- Shared rules

@@ -7,7 +7,7 @@ set -e
 
 CONFIG_DIR="$HOME/.ai-global"
 BACKUP_DIR="$CONFIG_DIR/backups"
-GLOBAL_MD="$CONFIG_DIR/AGENTS.md"
+AGENTS_MD="$CONFIG_DIR/AGENTS.md"
 SKILLS_DIR="$CONFIG_DIR/skills"
 AGENTS_DIR="$CONFIG_DIR/agents"
 RULES_DIR="$CONFIG_DIR/rules"
@@ -230,7 +230,6 @@ show_status() {
 
     local total_links=0
 
-    # Instructions
     local instr_output=""
     for pattern in "${KNOWN_PATTERNS[@]}"; do
         local p_dir p_name p_instr p_skills p_agents p_rules p_cmds
@@ -445,22 +444,22 @@ collect_agents_md() {
     done
 
     # Skip if AGENTS.md already exists
-    if [[ -f "$GLOBAL_MD" ]]; then
-        log_ok "Preserved existing $GLOBAL_MD (skipped merge)"
+    if [[ -f "$AGENTS_MD" ]]; then
+        log_ok "Preserved existing AGENTS.md (skipped merge)"
         return
     fi
 
     # Only create and merge if AGENTS.md doesn't exist
     if [[ $found_count -gt 0 ]]; then
-        echo -e "$merged_content" > "$GLOBAL_MD"
-        log_ok "Merged instructions from $found_count tool(s) to $GLOBAL_MD"
+        echo -e "$merged_content" > "$AGENTS_MD"
+        log_ok "Merged AGENTS.md from $found_count tool(s) to $AGENTS_MD"
     else
-        cat > "$GLOBAL_MD" << 'EOF'
-# AI Assistant Instructions
+        cat > "$AGENTS_MD" << 'EOF'
+# AI Coding Assistant
 
-<!-- Add your instructions here. They will sync to all AI tools. -->
+<!-- Add your prompts here. They will sync to all AI tools. -->
 EOF
-        log_ok "Created: $GLOBAL_MD"
+        log_ok "Created: $AGENTS_MD"
     fi
 }
 
@@ -493,7 +492,7 @@ update_tools() {
 
             if [[ "$agents_md" != "." ]] && [[ "$agents_md" == *.md ]]; then
                 local actual_path="$HOME/$dir_name/$agents_md"
-                backup_item "$actual_path" "$dir_name" "instructions"
+                backup_item "$actual_path" "$dir_name" "AGENTS.md"
             fi
 
             for type_name in skills agents rules commands; do
@@ -536,8 +535,8 @@ update_tools() {
             local tool_color=$(get_tool_color "$tool_name")
             if [[ "$agents_md" != "." ]] && [[ "$agents_md" == *.md ]]; then
                 local target="$HOME/$dir_name/$agents_md"
-                create_symlink "$GLOBAL_MD" "$target"
-                printf "${tool_color}%-40s -> %s${NC}\n" "$(beautify_path "$target")" "$(beautify_path "$GLOBAL_MD")"
+                create_symlink "$AGENTS_MD" "$target"
+                printf "${tool_color}%-40s -> %s${NC}\n" "$(beautify_path "$target")" "$(beautify_path "$AGENTS_MD")"
             fi
 
             for type_name in skills agents rules commands; do
@@ -576,14 +575,13 @@ unlink_single_tool() {
     local backup_name=$(echo "$dir_name" | tr '/' '_')
     local worked=false
 
-    # Check for instructions link
     if [[ "$agents_md" != "." ]]; then
         local target="$HOME/$dir_name/$agents_md"
         if [[ -L "$target" ]]; then
             local link_target=$(readlink "$target" 2>/dev/null || true)
             if [[ "$link_target" == *".ai-global"* ]]; then
                 rm "$target"
-                local backup_file=$(ls -t "$BACKUP_DIR"/${backup_name}.instructions.* 2>/dev/null | head -1)
+                local backup_file=$(ls -t "$BACKUP_DIR"/${backup_name}.AGENTS.md.* 2>/dev/null | head -1)
                 [[ -f "$backup_file" ]] && cp "$backup_file" "$target"
                 worked=true
             fi
@@ -968,7 +966,7 @@ upgrade() {
         mv "$exec_temp" "$current_script"
 
         log_ok "Upgraded to v$remote_version"
-        
+
         # Check and rename global.md to AGENTS.md after upgrade
         if [[ -f "$CONFIG_DIR/global.md" ]]; then
             log_info "Found legacy global.md file, renaming to AGENTS.md..."
