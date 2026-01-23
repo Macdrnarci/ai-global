@@ -7,12 +7,11 @@ set -e
 
 CONFIG_DIR="$HOME/.ai-global"
 BACKUP_DIR="$CONFIG_DIR/backups"
-GLOBAL_MD="$CONFIG_DIR/global.md"
+GLOBAL_MD="$CONFIG_DIR/AGENTS.md"
 SKILLS_DIR="$CONFIG_DIR/skills"
 AGENTS_DIR="$CONFIG_DIR/agents"
 RULES_DIR="$CONFIG_DIR/rules"
 COMMANDS_DIR="$CONFIG_DIR/commands"
-PROMPTS_DIR="$CONFIG_DIR/prompts"
 
 # Version
 VERSION="1.13.0"
@@ -90,49 +89,34 @@ log_warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
 # Known AI tool patterns
-# Format: dir|key|name|instr_file|skills_dir|agents_dir|rules_dir|commands_dir|prompts_dir
+# Format: dir|key|name|agents_file|skills_dir|agents_dir|rules_dir|commands_dir
 declare -a KNOWN_PATTERNS=(
-    ".claude|claude|Claude Code|CLAUDE.md|skills|.|.|commands|."
-    ".cursor|cursor|Cursor|rules/global.md|skills|.|.|.|prompts"
-    ".factory|droid|Factory Droid|droids/global.md|.|.|.|.|."
-    ".amp|amp|Amp|instructions.md|.|.|.|.|."
-    ".antigravity|antigravity|Antigravity|CLAUDE.md|skills|.|.|commands|."
-    ".gemini|gemini|Gemini CLI|GEMINI.md|skills|.|.|commands|."
-    ".kiro|kiro|Kiro|steering/global.md|.|agents|.|.|."
-    ".opencode|OpenCode|instructions.md|.|.|.|.|."
-    ".qoder|Qoder|instructions.md|.|.|.|.|."
-    ".qodo|qodo|Qodo|instructions.md|.|agents|.|.|."
-    ".config/github-copilot|github-copilot|GitHub Copilot|instructions.md|.|.|.|.|."
-    ".aider|aider|Aider|.aider.conf.yml|.|.|.|.|."
-    ".continue|continue|Continue|config.json|.|.|rules|.|prompts"
-    ".codeium|codeium|Codeium|config.json|.|.|.|.|."
-    ".tabnine|tabnine|TabNine|tabnine_config.json|.|.|.|.|."
-    ".sourcegraph|cody|Sourcegraph Cody|cody.json|.|.|.|commands|."
-    ".codegpt|codegpt|CodeGPT|settings.json|.|.|.|.|prompts"
-    ".windsurf|windsurf|Windsurf|instructions.md|skills|agents|rules|.|."
-    ".trae|trae|Trae|instructions.md|.|.|.|.|."
-    ".melty|melty|Melty|instructions.md|.|.|.|.|."
-    ".void|void|Void|instructions.md|.|.|.|.|."
-    ".roo|roo|Roo Code|instructions.md|.|.|rules|.|."
-    ".zed|zed|Zed|settings.json|.|.|.|.|."
-    ".cline|cline|Cline|instructions.md|.|.|rules|.|prompts"
-    ".aide|aide|Aide|instructions.md|.|.|.|.|."
-    ".pear|pear|PearAI|instructions.md|.|.|.|.|."
-    ".supermaven|supermaven|Supermaven|config.json|.|.|.|.|."
-    ".codestory|codestory|CodeStory|instructions.md|.|.|.|.|."
-    ".double|double|Double|instructions.md|.|.|.|.|."
-    ".blackbox|blackbox|Blackbox AI|config.json|.|.|.|.|."
-    ".amazonq|amazonq|Amazon Q|instructions.md|.|.|.|.|."
-    ".copilot-workspace|copilot-workspace|Copilot Workspace|instructions.md|.|.|.|.|."
-    ".codex|codex|OpenAI Codex|instructions.md|skills|agents|rules|.|."
-    ".goose|goose|Goose AI|instructions.md|skills|agents|rules|.|."
-    ".mentat|mentat|Mentat|instructions.md|skills|agents|rules|.|."
-    ".gpt-engineer|gpt-engineer|GPT Engineer|instructions.md|skills|agents|rules|.|prompts"
-    ".smol|smol|Smol Developer|instructions.md|skills|agents|rules|.|prompts"
-    ".config/opencode|opencode|OpenCode Config|instructions.md|.|.|.|.|."
-    ".augment|augment|Augment|instructions.md|.|agents|rules|.|."
-    ".codebuff|codebuff|Codebuff|instructions.md|.|agents|.|.|."
-    ".codebuddy|codebuddy|CodeBuddy|settings.json|.|agents|.|.|."
+    ".claude|claude|Claude Code|CLAUDE.md|skills|agents|.|commands"
+    ".codex|codex|OpenAI Codex|AGENTS.md|skills|agents|rules|."
+    ".cursor|cursor|Cursor|rules/AGENTS.md|skills|agents|rules|commands"
+    ".factory|droid|Factory Droid|AGENTS.md|skills|droids|rules|commands"
+    ".amp|amp|Amp|AGENTS.md|skills|.|rules|commands"
+    ".gemini|antigravity|Antigravity|GEMINI.md|antigravity/skills|.|.|."
+    ".gemini|gemini|Gemini CLI|GEMINI.md|skills|.|.|."
+    ".kiro|kiro|Kiro CLI|steering/AGENTS.md|skills|agents|steering|."
+    ".config/opencode|OpenCode|AGENTS.md|skill|agents|.|command"
+    ".qoder|Qoder|AGENTS.md|skills|agents|rules|commands"
+    ".qodo|qodo|Qodo|AGENTS.md|.|agents|.|."
+    ".copilot|copilot|GitHub Copilot|AGENTS.md|skills|agents|.|."
+    ".continue|continue|Continue|AGENTS.md|.|.|rules|."
+    ".codeium/windsurf|windsurf|Windsurf|AGENTS.md|skills|.|rules|."
+    ".roo|roo|Roo Code|AGENTS.md|skills|.|rules|commands"
+    ".cline|cline|Cline|AGENTS.md|skills|.|rules|."
+    ".blackbox|blackbox|Blackbox AI|.|skills|.|.|."
+    ".goose|goose|Goose AI|AGENTS.md|skills|.|.|."
+    ".augment|augment|Augment|AGENTS.md|.|agents|rules|commands"
+    ".clawdbot|clawdbot|Clawdbot Code|AGENTS.md|skills|subagents|.|."
+    ".commandcode|commandcode|Command Code|AGENTS.md|skills|.|.|commands"
+    ".kilocode|kilocode|Kilo Code|AGENTS.md|skills|.|rules|commands"
+    ".neovate|neovate|Neovate|AGENTS.md|skills|agents|.|commands"
+    ".openhands|openhands|OpenHands|AGENTS.md|skills|.|.|."
+    ".trae|trae|TRAE|AGENTS.md|skills|.|rules|."
+    ".zencoder|zencoder|Zencoder|AGENTS.md|skills|.|rules|."
 )
 
 # Backup a file or directory
@@ -249,15 +233,15 @@ show_status() {
     done
 
     if [[ -n "$instr_output" ]]; then
-        echo -e "${BLUE}[global.md]${NC}"
+        echo -e "${BLUE}[AGENTS.md]${NC}"
         echo -e -n "$instr_output"
     fi
 
-    for type_name in skills agents rules commands prompts; do
+    for type_name in skills agents rules commands; do
         local type_output=""
         for pattern in "${KNOWN_PATTERNS[@]}"; do
-            local p_dir p_name p_instr p_skills p_agents p_rules p_cmds p_prompts
-            IFS='|' read -r p_dir p_key p_name p_instr p_skills p_agents p_rules p_cmds p_prompts <<< "$pattern"
+            local p_dir p_name p_instr p_skills p_agents p_rules p_cmds
+            IFS='|' read -r p_dir p_key p_name p_instr p_skills p_agents p_rules p_cmds <<< "$pattern"
 
             local type_dir=""
             case "$type_name" in
@@ -265,7 +249,6 @@ show_status() {
                 agents)   type_dir="$p_agents" ;;
                 rules)    type_dir="$p_rules" ;;
                 commands) type_dir="$p_cmds" ;;
-                prompts)  type_dir="$p_prompts" ;;
             esac
 
             if [[ "$type_dir" != "." ]]; then
@@ -292,29 +275,27 @@ show_status() {
     fi
 
     echo ""
-    log_info "Shared items: skills=$(count_items "$SKILLS_DIR"), agents=$(count_items "$AGENTS_DIR"), rules=$(count_items "$RULES_DIR"), commands=$(count_items "$COMMANDS_DIR"), prompts=$(count_items "$PROMPTS_DIR")"
+    log_info "Shared items: skills=$(count_items "$SKILLS_DIR"), agents=$(count_items "$AGENTS_DIR"), rules=$(count_items "$RULES_DIR"), commands=$(count_items "$COMMANDS_DIR")"
 }
 
 # List supported tools
 list_supported() {
     log_info "Supported AI tools:"
     echo ""
-    printf "  ${BLUE}%-18s %-18s %-20s %-6s %-6s %-7s %-5s %-8s %s${NC}\n" "Tool" "Key" "Directory" "Skills" "Agents" "Rules" "Cmds" "Prompts" "Status"
-    echo "  ---------------------------------------------------------------------------------------------------------"
+    printf "  ${BLUE}%-18s %-18s %-20s %-6s %-6s %-7s %-5s %s${NC}\n" "Tool" "Key" "Directory" "Skills" "Agents" "Rules" "Cmds" "Status"
+    echo "  --------------------------------------------------------------------------------------------------------"
 
     for pattern in "${KNOWN_PATTERNS[@]}"; do
-        local p_dir p_name p_instr p_skills p_agents p_rules p_cmds p_prompts
-        IFS='|' read -r p_dir p_key p_name p_instr p_skills p_agents p_rules p_cmds p_prompts <<< "$pattern"
+        local p_dir p_name p_instr p_skills p_agents p_rules p_cmds
+        IFS='|' read -r p_dir p_key p_name p_instr p_skills p_agents p_rules p_cmds <<< "$pattern"
         local full_path="$HOME/$p_dir"
 
-        local s_str="." a_str="." r_str="." c_str="." p_str="."
+        local s_str="." a_str="." r_str="." c_str="."
         if [[ -d "$full_path" ]]; then
             [[ "$p_skills" != "." && -d "$full_path/$p_skills" ]] && s_str="✓"
             [[ "$p_agents" != "." && -d "$full_path/$p_agents" ]] && a_str="✓"
             [[ "$p_rules" != "." && -d "$full_path/$p_rules" ]] && r_str="✓"
             [[ "$p_cmds" != "." && -d "$full_path/$p_cmds" ]] && c_str="✓"
-            # Prompts can be a file or dir
-            [[ "$p_prompts" != "." && -e "$full_path/$p_prompts" ]] && p_str="✓"
         fi
 
         local status=""
@@ -330,8 +311,8 @@ list_supported() {
         # Use manual padding because printf handles multibyte characters (✓) by byte count in Bash 3.2.
         # Each category block matches the header's "%-10s " (11 characters total).
         # We use indicator + 10 spaces = 11 characters.
-        printf "  %b%-18s %-18s %-22s%b %s      %s      %s      %s      %s      %b\n" \
-            "$tool_color" "$p_name" "$p_key" "$p_dir" "$NC" "$s_str" "$a_str" "$r_str" "$c_str" "$p_str" "$status"
+        printf "  %b%-18s %-18s %-22s%b %s      %s      %s      %s      %b\n" \
+            "$tool_color" "$p_name" "$p_key" "$p_dir" "$NC" "$s_str" "$a_str" "$r_str" "$c_str" "$status"
     done
     echo ""
 }
@@ -381,10 +362,10 @@ collect_instructions() {
     local found_count=0
 
     for pattern in "${KNOWN_PATTERNS[@]}"; do
-        IFS='|' read -r dir_name key tool_name instr_file skills agents rules commands prompts <<< "$pattern"
+        IFS='|' read -r dir_name key tool_name agents_file skills agents rules commands <<< "$pattern"
 
-        if [[ "$instr_file" != "." ]] && [[ "$instr_file" != *.json ]] && [[ "$instr_file" != *.yml ]]; then
-            local actual_path="$HOME/$dir_name/$instr_file"
+        if [[ "$agents_file" != "." ]] && [[ "$agents_file" != *.json ]] && [[ "$agents_file" != *.yml ]]; then
+            local actual_path="$HOME/$dir_name/$agents_file"
             [[ -L "$actual_path" ]] && continue
 
             if [[ -f "$actual_path" ]]; then
@@ -400,13 +381,13 @@ collect_instructions() {
         fi
     done
 
-    # Skip if global.md already exists
+    # Skip if AGENTS.md already exists
     if [[ -f "$GLOBAL_MD" ]]; then
         log_ok "Preserved existing $GLOBAL_MD (skipped merge)"
         return
     fi
 
-    # Only create and merge if global.md doesn't exist
+    # Only create and merge if AGENTS.md doesn't exist
     if [[ $found_count -gt 0 ]]; then
         echo -e "$merged_content" > "$GLOBAL_MD"
         log_ok "Merged instructions from $found_count tool(s) to $GLOBAL_MD"
@@ -425,14 +406,14 @@ update_tools() {
     log_info "Scanning for AI tools..."
     echo ""
 
-    mkdir -p "$SKILLS_DIR" "$AGENTS_DIR" "$RULES_DIR" "$COMMANDS_DIR" "$PROMPTS_DIR" "$BACKUP_DIR"
+    mkdir -p "$SKILLS_DIR" "$AGENTS_DIR" "$RULES_DIR" "$COMMANDS_DIR" "$BACKUP_DIR"
 
     collect_instructions
 
     local tool_count=0
 
     for pattern in "${KNOWN_PATTERNS[@]}"; do
-        IFS='|' read -r dir_name key tool_name instr_file skills agents rules commands prompts <<< "$pattern"
+        IFS='|' read -r dir_name key tool_name agents_file skills agents rules commands <<< "$pattern"
         local full_path="$HOME/$dir_name"
 
         if [[ -d "$full_path" ]]; then
@@ -440,19 +421,18 @@ update_tools() {
             echo -e "${GREEN}[OK]${NC} ${color}Found: $tool_name${NC}"
             ((tool_count++))
 
-            if [[ "$instr_file" != "." ]] && [[ "$instr_file" != *.json ]] && [[ "$instr_file" != *.yml ]]; then
-                local actual_path="$HOME/$dir_name/$instr_file"
+            if [[ "$agents_file" != "." ]] && [[ "$agents_file" != *.json ]] && [[ "$agents_file" != *.yml ]]; then
+                local actual_path="$HOME/$dir_name/$agents_file"
                 backup_item "$actual_path" "$dir_name" "instructions"
             fi
 
-            for type_name in skills agents rules commands prompts; do
+            for type_name in skills agents rules commands; do
                 local type_dir=""
                 case "$type_name" in
                     skills) type_dir="$skills" ;;
                     agents) type_dir="$agents" ;;
                     rules) type_dir="$rules" ;;
                     commands) type_dir="$commands" ;;
-                    prompts) type_dir="$prompts" ;;
                 esac
                 if [[ "$type_dir" != "." ]]; then
                     local path="$HOME/$dir_name/$type_dir"
@@ -463,7 +443,6 @@ update_tools() {
                         agents) target_dir="$AGENTS_DIR" ;;
                         rules) target_dir="$RULES_DIR" ;;
                         commands) target_dir="$COMMANDS_DIR" ;;
-                        prompts) target_dir="$PROMPTS_DIR" ;;
                     esac
                     merge_items "$path" "$target_dir" "$type_name" "$tool_name"
                 fi
@@ -480,18 +459,18 @@ update_tools() {
     log_info "Creating symlinks..."
 
     for pattern in "${KNOWN_PATTERNS[@]}"; do
-        IFS='|' read -r dir_name key tool_name instr_file skills agents rules commands prompts <<< "$pattern"
+        IFS='|' read -r dir_name key tool_name agents_file skills agents rules commands <<< "$pattern"
         local full_path="$HOME/$dir_name"
 
         if [[ -d "$full_path" ]]; then
             local tool_color=$(get_tool_color "$tool_name")
-            if [[ "$instr_file" != "." ]] && [[ "$instr_file" != *.json ]] && [[ "$instr_file" != *.yml ]]; then
-                local target="$HOME/$dir_name/$instr_file"
+            if [[ "$agents_file" != "." ]] && [[ "$agents_file" != *.json ]] && [[ "$agents_file" != *.yml ]]; then
+                local target="$HOME/$dir_name/$agents_file"
                 create_symlink "$GLOBAL_MD" "$target"
                 printf "${tool_color}%-40s -> %s${NC}\n" "$(beautify_path "$target")" "$(beautify_path "$GLOBAL_MD")"
             fi
 
-            for type_name in skills agents rules commands prompts; do
+            for type_name in skills agents rules commands; do
                 local type_dir=""
                 local source_dir=""
                 case "$type_name" in
@@ -499,7 +478,6 @@ update_tools() {
                     agents) type_dir="$agents"; source_dir="$AGENTS_DIR" ;;
                     rules) type_dir="$rules"; source_dir="$RULES_DIR" ;;
                     commands) type_dir="$commands"; source_dir="$COMMANDS_DIR" ;;
-                    prompts) type_dir="$prompts"; source_dir="$PROMPTS_DIR" ;;
                 esac
                 if [[ "$type_dir" != "." ]]; then
                     local target="$HOME/$dir_name/$type_dir"
@@ -511,27 +489,26 @@ update_tools() {
     done
 
     echo ""
-    log_info "Done! Shared: skills=$(count_items "$SKILLS_DIR"), agents=$(count_items "$AGENTS_DIR"), rules=$(count_items "$RULES_DIR"), commands=$(count_items "$COMMANDS_DIR"), prompts=$(count_items "$PROMPTS_DIR")"
+    log_info "Done! Shared: skills=$(count_items "$SKILLS_DIR"), agents=$(count_items "$AGENTS_DIR"), rules=$(count_items "$RULES_DIR"), commands=$(count_items "$COMMANDS_DIR")"
 }
 
 # Unlink a single tool
 unlink_single_tool() {
     local tool_name="$1"
     local dir_name="$2"
-    local instr_file="$3"
+    local agents_file="$3"
     local skills="$4"
     local agents="$5"
     local rules="$6"
     local commands="$7"
-    local prompts="$8"
-    local silent="${9:-false}"
+    local silent="${8:-false}"
 
     local backup_name=$(echo "$dir_name" | tr '/' '_')
     local worked=false
 
     # Check for instructions link
-    if [[ "$instr_file" != "." ]]; then
-        local target="$HOME/$dir_name/$instr_file"
+    if [[ "$agents_file" != "." ]]; then
+        local target="$HOME/$dir_name/$agents_file"
         if [[ -L "$target" ]]; then
             local link_target=$(readlink "$target" 2>/dev/null || true)
             if [[ "$link_target" == *".ai-global"* ]]; then
@@ -544,14 +521,13 @@ unlink_single_tool() {
     fi
 
     # Check for components links
-    for type_name in skills agents rules commands prompts; do
+    for type_name in skills agents rules commands; do
         local type_dir=""
         case "$type_name" in
             skills) type_dir="$skills" ;;
             agents) type_dir="$agents" ;;
             rules) type_dir="$rules" ;;
             commands) type_dir="$commands" ;;
-            prompts) type_dir="$prompts" ;;
         esac
         if [[ "$type_dir" != "." ]]; then
             local target="$HOME/$dir_name/$type_dir"
@@ -595,8 +571,8 @@ unlink_all_tools() {
     local unlinked_count=0
     # Scan all known patterns to find and remove any symlinks
     for pattern in "${KNOWN_PATTERNS[@]}"; do
-        IFS='|' read -r dir_name key tool_name instr_file skills agents rules commands prompts <<< "$pattern"
-        if unlink_single_tool "$tool_name" "$dir_name" "$instr_file" "$skills" "$agents" "$rules" "$commands" "$prompts"; then
+        IFS='|' read -r dir_name key tool_name agents_file skills agents rules commands <<< "$pattern"
+        if unlink_single_tool "$tool_name" "$dir_name" "$agents_file" "$skills" "$agents" "$rules" "$commands"; then
             ((unlinked_count++))
         fi
     done
@@ -641,12 +617,12 @@ unlink_tool() {
     local found=false
 
     for pattern in "${KNOWN_PATTERNS[@]}"; do
-        IFS='|' read -r dir_name key tool_name instr_file skills agents rules commands prompts <<< "$pattern"
+        IFS='|' read -r dir_name key tool_name agents_file skills agents rules commands <<< "$pattern"
         local tool_lower=$(echo "$tool_name" | tr '[:upper:]' '[:lower:]')
         local query_lower=$(echo "$tool_query" | tr '[:upper:]' '[:lower:]')
 
         if [[ "$tool_lower" == *"$query_lower"* ]] || [[ "$dir_name" == *"$query_lower"* ]] || [[ "$key" == "$query_lower" ]]; then
-            if ! unlink_single_tool "$tool_name" "$dir_name" "$instr_file" "$skills" "$agents" "$rules" "$commands" "$prompts"; then
+            if ! unlink_single_tool "$tool_name" "$dir_name" "$agents_file" "$skills" "$agents" "$rules" "$commands"; then
                 log_info "$tool_name is not currently linked."
             fi
             found=true
@@ -855,7 +831,6 @@ add_item() {
         agent)   target_dir="$AGENTS_DIR" ;;
         rule)    target_dir="$RULES_DIR" ;;
         command) target_dir="$COMMANDS_DIR" ;;
-        prompt)  target_dir="$PROMPTS_DIR" ;;
     esac
 
     mkdir -p "$target_dir"
@@ -968,7 +943,6 @@ show_help() {
     echo -e "  ${GREEN}agent <source>${NC}      Add an agent"
     echo -e "  ${GREEN}rule <source>${NC}       Add a rule"
     echo -e "  ${GREEN}command <source>${NC}    Add a command"
-    echo -e "  ${GREEN}prompt <source>${NC}     Add a prompt"
     echo ""
     echo -e "${BLUE}SYSTEM COMMANDS:${NC}"
     echo -e "  ${GREEN}upgrade${NC}             Upgrade ai-global to latest version"
@@ -991,11 +965,11 @@ main() {
         help|--help|-h) show_help; exit 0 ;;
         list) list_supported; exit 0 ;;
         version|-v|--version) show_version; exit 0 ;;
-        skill|agent|rule|command|prompt|unlink|status|backups|upgrade|uninstall)
+        skill|agent|rule|command|unlink|status|backups|upgrade|uninstall)
             if [[ ! -d "$CONFIG_DIR" ]]; then
                 log_info "No configuration found. Running initial scan..."
                 update_tools
-                [[ "$cmd" == "skill" || "$cmd" == "agent" || "$cmd" == "rule" || "$cmd" == "command" || "$cmd" == "prompt" || "$cmd" == "status" ]] || exit 0
+                [[ "$cmd" == "skill" || "$cmd" == "agent" || "$cmd" == "rule" || "$cmd" == "command" || "$cmd" == "status" ]] || exit 0
             fi
             ;;
         version|-v|--version|help|--help|-h) ;;
@@ -1012,7 +986,6 @@ main() {
         agent)        add_item "agent" "$2" ;;
         rule)         add_item "rule" "$2" ;;
         command)      add_item "command" "$2" ;;
-        prompt)       add_item "prompt" "$2" ;;
         upgrade)      upgrade ;;
         uninstall)    uninstall ;;
         version|-v|--version) show_version ;;
