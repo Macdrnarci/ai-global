@@ -6,12 +6,12 @@
 set -e
 
 CONFIG_DIR="$HOME/.ai-global"
-BACKUP_DIR="$CONFIG_DIR/backups"
 AGENTS_MD="$CONFIG_DIR/AGENTS.md"
-SKILLS_DIR="$CONFIG_DIR/skills"
-AGENTS_DIR="$CONFIG_DIR/agents"
 RULES_DIR="$CONFIG_DIR/rules"
 COMMANDS_DIR="$CONFIG_DIR/commands"
+SKILLS_DIR="$CONFIG_DIR/skills"
+SUBAGENTS_DIR="$CONFIG_DIR/agents"
+BACKUPS_DIR="$CONFIG_DIR/backups"
 
 # Version
 VERSION="1.14.0"
@@ -145,11 +145,11 @@ backup_item() {
     [[ ! -e "$source" ]] && return 0
     [[ -L "$source" ]] && return 0
 
-    mkdir -p "$BACKUP_DIR"
+    mkdir -p "$BACKUPS_DIR"
 
     local backup_name=$(echo "$tool_dir" | tr '/' '_')
     local timestamp=$(date +%s)
-    local backup_path="$BACKUP_DIR/${backup_name}.${type}.${timestamp}"
+    local backup_path="$BACKUPS_DIR/${backup_name}.${type}.${timestamp}"
 
     if [[ -d "$source" ]]; then
         cp -r "$source" "$backup_path" 2>/dev/null || return 0
@@ -230,41 +230,41 @@ show_status() {
 
     local total_links=0
 
-    local instr_output=""
+    local agents_md_output=""
     for pattern in "${KNOWN_PATTERNS[@]}"; do
-        local p_dir p_name p_instr p_skills p_agents p_rules p_cmds
-        IFS='|' read -r p_dir p_key p_name p_instr p_rules p_cmds p_skills p_agents <<< "$pattern"
+        local p_dir p_name p_agents_md p_skills p_subagents p_rules p_cmds
+        IFS='|' read -r p_dir p_key p_name p_agents_md p_rules p_cmds p_skills p_subagents <<< "$pattern"
 
-        if [[ "$p_instr" != "." ]] && [[ "$p_instr" == *.md ]]; then
-            local target="$HOME/$p_dir/$p_instr"
+        if [[ "$p_agents_md" != "." ]] && [[ "$p_agents_md" == *.md ]]; then
+            local target="$HOME/$p_dir/$p_agents_md"
             if [[ -L "$target" ]]; then
                 local link_target=$(readlink "$target" 2>/dev/null || true)
                 if [[ "$link_target" == *".ai-global"* ]]; then
                     local tool_color=$(get_tool_color "$p_name")
-                    instr_output+="  ${tool_color}$(beautify_path "$target")${NC}\n"
+                    agents_md_output+="  ${tool_color}$(beautify_path "$target")${NC}\n"
                     ((total_links++))
                 fi
             fi
         fi
     done
 
-    if [[ -n "$instr_output" ]]; then
+    if [[ -n "$agents_md_output" ]]; then
         echo -e "${BLUE}[AGENTS.md]${NC}"
-        echo -e -n "$instr_output"
+        echo -e -n "$agents_md_output"
     fi
 
     for type_name in rules commands skills agents; do
         local type_output=""
         for pattern in "${KNOWN_PATTERNS[@]}"; do
-            local p_dir p_name p_instr p_skills p_agents p_rules p_cmds
-            IFS='|' read -r p_dir p_key p_name p_instr p_rules p_cmds p_skills p_agents <<< "$pattern"
+            local p_dir p_name p_agents_md p_skills p_subagents p_rules p_cmds
+            IFS='|' read -r p_dir p_key p_name p_agents_md p_rules p_cmds p_skills p_subagents <<< "$pattern"
 
             local type_dir=""
             case "$type_name" in
                 rules)    type_dir="$p_rules" ;;
                 commands) type_dir="$p_cmds" ;;
                 skills)   type_dir="$p_skills" ;;
-                agents)   type_dir="$p_agents" ;;
+                agents)   type_dir="$p_subagents" ;;
             esac
 
             if [[ "$type_dir" != "." ]]; then
@@ -291,7 +291,7 @@ show_status() {
     fi
 
     echo ""
-    log_info "Shared items: rules=$(count_items "$RULES_DIR"), commands=$(count_items "$COMMANDS_DIR"), skills=$(count_items "$SKILLS_DIR"), agents=$(count_items "$AGENTS_DIR")"
+    log_info "Shared items: rules=$(count_items "$RULES_DIR"), commands=$(count_items "$COMMANDS_DIR"), skills=$(count_items "$SKILLS_DIR"), agents=$(count_items "$SUBAGENTS_DIR")"
 }
 
 # List supported tools
@@ -302,14 +302,14 @@ list_supported() {
     echo "  ----------------------------------------------------------------------------------------------------"
 
     for pattern in "${KNOWN_PATTERNS[@]}"; do
-        local p_dir p_name p_instr p_skills p_agents p_rules p_cmds
-        IFS='|' read -r p_dir p_key p_name p_instr p_rules p_cmds p_skills p_agents <<< "$pattern"
+        local p_dir p_name p_agents_md p_skills p_subagents p_rules p_cmds
+        IFS='|' read -r p_dir p_key p_name p_agents_md p_rules p_cmds p_skills p_subagents <<< "$pattern"
         local full_path="$HOME/$p_dir"
 
         local g_str="." s_str="." a_str="." r_str="." c_str="."
 
         # Check what the tool supports based on KNOWN_PATTERNS
-        if [[ "$p_instr" != "." ]]; then
+        if [[ "$p_agents_md" != "." ]]; then
             g_str="○"
         else
             g_str="${GRAY}.${NC}"
@@ -319,7 +319,7 @@ list_supported() {
         else
             s_str="${GRAY}.${NC}"
         fi
-        if [[ "$p_agents" != "." ]]; then
+        if [[ "$p_subagents" != "." ]]; then
             a_str="○"
         else
             a_str="${GRAY}.${NC}"
@@ -337,9 +337,9 @@ list_supported() {
 
         # If tool is installed, check if the configs actually exist
         if [[ -d "$full_path" ]]; then
-            [[ "$p_instr" != "." && "$p_instr" == *.md && -f "$full_path/$p_instr" ]] && g_str="○"
+            [[ "$p_agents_md" != "." && "$p_agents_md" == *.md && -f "$full_path/$p_agents_md" ]] && g_str="○"
             [[ "$p_skills" != "." && -d "$full_path/$p_skills" ]] && s_str="○"
-            [[ "$p_agents" != "." && -d "$full_path/$p_agents" ]] && a_str="○"
+            [[ "$p_subagents" != "." && -d "$full_path/$p_subagents" ]] && a_str="○"
             [[ "$p_rules" != "." && -d "$full_path/$p_rules" ]] && r_str="○"
             [[ "$p_cmds" != "." && -d "$full_path/$p_cmds" ]] && c_str="○"
         fi
@@ -383,7 +383,7 @@ list_backups() {
     echo ""
 
     # Use ls -A to catch hidden files/dirs (starting with .)
-    local backups_list=$(ls -A "$BACKUP_DIR" 2>/dev/null || true)
+    local backups_list=$(ls -A "$BACKUPS_DIR" 2>/dev/null || true)
 
     if [[ -z "$backups_list" ]]; then
         echo "  No backups found"
@@ -412,7 +412,7 @@ list_backups() {
 
         local tool_color=$(get_tool_color "${tool_name//_/ }")
         # Print the backup filename as a path prefixed with ~/ using beautify_path
-        local backup_path=$(beautify_path "$BACKUP_DIR/$filename")
+        local backup_path=$(beautify_path "$BACKUPS_DIR/$filename")
         printf "  %s%-18s %-10s %s%b\n" "$tool_color" "$tool_name" "$type" "$backup_path" "$NC"
     done <<< "$backups_list"
     echo ""
@@ -468,7 +468,7 @@ update_tools() {
     log_info "Scanning for AI tools..."
     echo ""
 
-    mkdir -p "$SKILLS_DIR" "$AGENTS_DIR" "$RULES_DIR" "$COMMANDS_DIR" "$BACKUP_DIR"
+    mkdir -p "$SKILLS_DIR" "$SUBAGENTS_DIR" "$RULES_DIR" "$COMMANDS_DIR" "$BACKUPS_DIR"
 
     # Check and rename global.md to AGENTS.md if it exists
     if [[ -f "$CONFIG_DIR/global.md" ]]; then
@@ -511,7 +511,7 @@ update_tools() {
                         rules) target_dir="$RULES_DIR" ;;
                         commands) target_dir="$COMMANDS_DIR" ;;
                         skills) target_dir="$SKILLS_DIR" ;;
-                        agents) target_dir="$AGENTS_DIR" ;;
+                        agents) target_dir="$SUBAGENTS_DIR" ;;
                     esac
                     merge_items "$path" "$target_dir" "$type_name" "$tool_name"
                 fi
@@ -546,7 +546,7 @@ update_tools() {
                     rules) type_dir="$rules"; source_dir="$RULES_DIR" ;;
                     commands) type_dir="$commands"; source_dir="$COMMANDS_DIR" ;;
                     skills) type_dir="$skills"; source_dir="$SKILLS_DIR" ;;
-                    agents) type_dir="$agents"; source_dir="$AGENTS_DIR" ;;
+                    agents) type_dir="$agents"; source_dir="$SUBAGENTS_DIR" ;;
                 esac
                 if [[ "$type_dir" != "." ]]; then
                     local target="$HOME/$dir_name/$type_dir"
@@ -558,7 +558,7 @@ update_tools() {
     done
 
     echo ""
-    log_info "Done! Shared: rules=$(count_items "$RULES_DIR"), commands=$(count_items "$COMMANDS_DIR"), skills=$(count_items "$SKILLS_DIR"), agents=$(count_items "$AGENTS_DIR")"
+    log_info "Done! Shared: rules=$(count_items "$RULES_DIR"), commands=$(count_items "$COMMANDS_DIR"), skills=$(count_items "$SKILLS_DIR"), agents=$(count_items "$SUBAGENTS_DIR")"
 }
 
 # Unlink a single tool
@@ -581,7 +581,7 @@ unlink_single_tool() {
             local link_target=$(readlink "$target" 2>/dev/null || true)
             if [[ "$link_target" == *".ai-global"* ]]; then
                 rm "$target"
-                local backup_file=$(ls -t "$BACKUP_DIR"/${backup_name}.AGENTS.md.* 2>/dev/null | head -1)
+                local backup_file=$(ls -t "$BACKUPS_DIR"/${backup_name}.AGENTS.md.* 2>/dev/null | head -1)
                 [[ -f "$backup_file" ]] && cp "$backup_file" "$target"
                 worked=true
             fi
@@ -603,7 +603,7 @@ unlink_single_tool() {
                 local link_target=$(readlink "$target" 2>/dev/null || true)
                 if [[ "$link_target" == *".ai-global"* ]]; then
                     rm "$target"
-                    local backup_file=$(ls -td "$BACKUP_DIR"/${backup_name}.${type_name}.* 2>/dev/null | head -1)
+                    local backup_file=$(ls -td "$BACKUPS_DIR"/${backup_name}.${type_name}.* 2>/dev/null | head -1)
                     if [[ -d "$backup_file" ]]; then
                         cp -r "$backup_file" "$target"
                     fi
@@ -615,9 +615,9 @@ unlink_single_tool() {
 
     # Check for backups persistence
     local has_backups=false
-    if [[ -n "$(ls "$BACKUP_DIR"/${backup_name}.* 2>/dev/null)" ]]; then
+    if [[ -n "$(ls "$BACKUPS_DIR"/${backup_name}.* 2>/dev/null)" ]]; then
         has_backups=true
-        rm -rf "$BACKUP_DIR"/${backup_name}.* 2>/dev/null || true
+        rm -rf "$BACKUPS_DIR"/${backup_name}.* 2>/dev/null || true
     fi
 
     if [[ "$worked" == true ]] || [[ "$has_backups" == true ]]; then
@@ -656,7 +656,7 @@ unlink_all_tools() {
     done
 
     # Clear all backups as requested
-    rm -rf "$BACKUP_DIR"/* 2>/dev/null || true
+    rm -rf "$BACKUPS_DIR"/* 2>/dev/null || true
 
     echo ""
     if [[ $unlinked_count -gt 0 ]]; then
