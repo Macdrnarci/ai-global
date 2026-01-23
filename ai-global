@@ -488,7 +488,7 @@ update_tools() {
             if [[ "$instr_file" != "." ]] && [[ "$instr_file" != *.json ]] && [[ "$instr_file" != *.yml ]]; then
                 local target="$HOME/$dir_name/$instr_file"
                 create_symlink "$GLOBAL_MD" "$target"
-                printf "  ${tool_color}✓ %-40s -> %s${NC}\n" "$(beautify_path "$target")" "$(beautify_path "$GLOBAL_MD")"
+                printf "${tool_color}%-40s -> %s${NC}\n" "$(beautify_path "$target")" "$(beautify_path "$GLOBAL_MD")"
             fi
 
             for type_name in skills agents rules commands prompts; do
@@ -504,7 +504,7 @@ update_tools() {
                 if [[ "$type_dir" != "." ]]; then
                     local target="$HOME/$dir_name/$type_dir"
                     create_symlink "$source_dir" "$target"
-                    printf "  ${tool_color}✓ %-40s -> %s${NC}\n" "$(beautify_path "$target")" "$(beautify_path "$source_dir")/"
+                    printf "${tool_color}%-40s -> %s${NC}\n" "$(beautify_path "$target")" "$(beautify_path "$source_dir")/"
                 fi
             done
         fi
